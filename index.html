@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>RO Incentive Calculator — HDFC × ABSLI</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+<style>
+/* ── ABSLI Brand Palette ─────────────────────────────
+   Primary Red   #C91429   Dark Red    #8D1218
+   White         #FFFFFF   Cream       #FFF4DA
+   Orange        #F77400   Green       #73B964
+   Purple        #7C2279   Dark Grey   #414042
+   Mid Grey      #77787B   Light Grey  #DCDDE2
+───────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#DCDDE2;min-height:100vh;padding-bottom:40px}
+input,select,button{font-family:inherit}
+
+/* Header */
+.header{background:#C91429;padding:20px 16px;color:#FFFFFF}
+.header-inner{max-width:560px;margin:0 auto;text-align:center}
+.header-eyebrow{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;opacity:.85;margin-bottom:4px}
+.header-title{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400}
+.header-sub{font-size:11px;opacity:.75;margin-top:3px}
+
+.wrap{max-width:560px;margin:0 auto;padding:14px 14px 0}
+
+/* Cards */
+.card{background:#FFFFFF;border-radius:12px;padding:16px 14px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:14px}
+.card-title{font-size:13px;font-weight:700;color:#414042;margin-bottom:14px}
+
+/* Fields */
+.fields{display:flex;flex-wrap:wrap;gap:10px}
+.field{flex:1 1 100%}
+.field.half{flex:1 1 45%;min-width:140px}
+.field label{display:block;font-size:11px;font-weight:700;color:#414042;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}
+.field .hint{font-size:9px;color:#77787B;margin-top:2px}
+.input-wrap{position:relative}
+.input-wrap input{width:100%;padding:9px 11px;border:1.5px solid #DCDDE2;border-radius:8px;font-size:15px;color:#414042;background:#FFFFFF;outline:none}
+.input-wrap input:focus{border-color:#C91429}
+.input-wrap .sfx{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:12px;color:#77787B;font-weight:600;pointer-events:none}
+.input-wrap input.has-sfx{padding-right:34px}
+select{width:100%;padding:9px 11px;border:1.5px solid #DCDDE2;border-radius:8px;font-size:15px;color:#414042;background:#FFFFFF;outline:none}
+
+/* Toggle */
+.tog-wrap{display:flex;align-items:center;gap:8px;padding:7px 11px;border:1.5px solid #DCDDE2;border-radius:8px;background:#FFFFFF;cursor:pointer;user-select:none;transition:all .15s}
+.tog-wrap.on{border-color:#73B964;background:#FFFFFF}
+.tog-track{width:36px;height:20px;border-radius:10px;background:#DCDDE2;position:relative;flex-shrink:0;transition:background .2s}
+.tog-track.on{background:#73B964}
+.tog-thumb{width:16px;height:16px;border-radius:8px;background:#FFFFFF;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.tog-track.on .tog-thumb{left:18px}
+.tog-label{font-size:13px;color:#77787B;font-weight:600}
+.tog-wrap.on .tog-label{color:#73B964}
+
+/* Button */
+.calc-btn{width:100%;margin-top:16px;padding:13px 0;background:#C91429;color:#FFFFFF;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.3px}
+.calc-btn:hover{background:#8D1218}
+
+/* Hero result */
+.hero{background:#8D1218;border-radius:12px;padding:20px 18px;color:#FFFFFF;margin-bottom:10px;border-left:5px solid #F77400}
+.hero-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;opacity:.8}
+.hero-amount{font-family:'DM Serif Display',serif;font-size:38px;margin-top:4px}
+.hero-meta{font-size:11px;opacity:.75;margin-top:5px}
+.hero-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.hero-tag{font-size:10px;padding:2px 8px;border-radius:4px}
+
+/* Money losing */
+.losing-card{background:#FFFFFF;border:2px solid #C91429;border-radius:12px;padding:16px 14px;margin-bottom:10px}
+.losing-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.losing-title{font-size:14px;font-weight:800;color:#C91429}
+.losing-total-amt{font-size:17px;font-weight:800;color:#C91429}
+.losing-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid #DCDDE2}
+.losing-row:last-of-type{border-bottom:none}
+.losing-row-label{font-size:12px;font-weight:700;color:#414042}
+.losing-row-reason{font-size:10px;color:#77787B;margin-top:2px}
+.losing-row-amt{font-size:14px;font-weight:800;color:#C91429;white-space:nowrap}
+.losing-footer{margin-top:12px;padding:10px 12px;background:#C91429;border-radius:6px;display:flex;justify-content:space-between;align-items:center}
+.losing-footer-label{font-size:11px;font-weight:700;color:#FFFFFF}
+.losing-footer-amt{font-size:16px;font-weight:800;color:#FFFFFF}
+.losing-note{font-size:10px;color:#77787B;margin-top:6px;text-align:center}
+
+/* Insights */
+.section-title{font-size:14px;font-weight:800;color:#414042;margin-bottom:12px}
+.insight{border-radius:8px;padding:11px 12px;margin-bottom:8px;border-left:4px solid}
+.insight.red{background:#FFFFFF;border-color:#C91429;border:1px solid #DCDDE2;border-left:4px solid #C91429}
+.insight.orange{background:#FFFFFF;border:1px solid #DCDDE2;border-left:4px solid #F77400}
+.insight.green{background:#FFFFFF;border:1px solid #DCDDE2;border-left:4px solid #73B964}
+.insight-head{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.insight-icon{font-size:16px}
+.insight-tag{font-size:9px;font-weight:800;text-transform:uppercase;padding:2px 7px;border-radius:4px}
+.insight.red .insight-tag{color:#FFFFFF;background:#C91429}
+.insight.orange .insight-tag{color:#FFFFFF;background:#F77400}
+.insight.green .insight-tag{color:#FFFFFF;background:#73B964}
+.insight-gain{font-size:11px;font-weight:800;color:#73B964;margin-left:auto}
+.insight-msg{font-size:12px;color:#414042;line-height:1.55}
+.insight-act{font-size:11px;color:#8D1218;font-weight:700;margin-top:5px;padding-top:5px;border-top:1px solid #DCDDE2}
+
+/* Chart & stat cards */
+.breakdown-card{background:#FFFFFF;border-radius:12px;padding:16px 14px;margin-bottom:10px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.stat-card{background:#FFFFFF;border-radius:8px;padding:9px 10px;border:1px solid #DCDDE2}
+.stat-label{font-size:9px;color:#77787B;text-transform:uppercase;font-weight:600}
+.stat-value{font-size:14px;font-weight:800;margin-top:2px}
+
+/* What's going well */
+.well-card{background:#FFFFFF;border-radius:12px;padding:14px 14px;margin-bottom:10px}
+.well-row{background:#FFFFFF;border:1px solid #DCDDE2;border-left:4px solid #73B964;border-radius:8px;padding:9px 11px;display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+.well-row:last-child{margin-bottom:0}
+.well-tag{font-size:11px;font-weight:700;color:#73B964}
+.well-msg{font-size:11px;color:#414042;line-height:1.4;margin-top:1px}
+
+/* Steps */
+.steps-toggle{width:100%;padding:9px;background:#FFFFFF;border:1.5px solid #DCDDE2;border-radius:8px;font-size:12px;color:#77787B;cursor:pointer;margin-bottom:8px;font-weight:600}
+.steps-card{background:#FFFFFF;border-radius:12px;padding:14px 12px;margin-bottom:10px}
+.steps-title{font-size:12px;font-weight:700;color:#414042;margin-bottom:10px}
+.step-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 4px;border-bottom:1px solid #DCDDE2}
+.step-row.final{border-bottom:2px solid #C91429;background:#FFF4DA;border-radius:6px;padding:8px 6px}
+.step-lbl{font-size:11px;font-weight:600;color:#414042}
+.step-row.final .step-lbl{font-weight:800;color:#C91429}
+.step-detail{font-size:10px;color:#77787B;margin-top:1px}
+.step-amt{font-size:12px;font-weight:800;white-space:nowrap;align-self:center;padding-left:8px}
+.export-btn{width:100%;padding:10px;background:transparent;color:#C91429;border:1.5px solid #C91429;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:12px}
+.footer-note{font-size:10px;color:#77787B;text-align:center;line-height:1.6}
+.hidden{display:none}
+
+@media print{button{display:none!important}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-eyebrow">HDFC Branch Banking × ABSLI</div>
+    <div class="header-title">RO Incentive Simulation</div>
+    <div class="header-sub">April 2026 Structure</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- INPUTS -->
+  <div class="card">
+    <div class="card-title">Your Numbers</div>
+    <div class="fields">
+      <div class="field">
+        <label>WFYP Target (₹)</label>
+        <div class="input-wrap"><input id="tgt" type="text" inputmode="decimal" placeholder="500000"/></div>
+        <div class="hint">Enter amount in ₹</div>
+      </div>
+      <div class="field">
+        <label>WFYP Achieved (₹)</label>
+        <div class="input-wrap"><input id="achieved" type="text" inputmode="decimal" placeholder="450000"/></div>
+        <div class="hint">Enter amount in ₹, not %</div>
+      </div>
+      <div class="field half">
+        <label>Persistency %</label>
+        <div class="input-wrap"><input id="persPct" type="text" inputmode="decimal" placeholder="88" class="has-sfx"/><span class="sfx">%</span></div>
+        <div class="hint">Blank = assume at target</div>
+      </div>
+      <div class="field half">
+        <label>Persistency Target %</label>
+        <div class="input-wrap"><input id="persTgt" type="text" inputmode="decimal" placeholder="86" value="86" class="has-sfx"/><span class="sfx">%</span></div>
+      </div>
+      <div class="field half">
+        <label>NOP (Policies)</label>
+        <div class="input-wrap"><input id="nop" type="text" inputmode="decimal" placeholder="4"/></div>
+      </div>
+      <div class="field half">
+        <label>Traditional Policies</label>
+        <div class="input-wrap"><input id="trad" type="text" inputmode="decimal" placeholder="1"/></div>
+        <div class="hint">Out of NOP</div>
+      </div>
+      <div class="field half">
+        <label>Branch Activations</label>
+        <div class="input-wrap"><input id="brAct" type="text" inputmode="decimal" placeholder="2"/></div>
+      </div>
+      <div class="field half">
+        <label>SP Activations</label>
+        <div class="input-wrap"><input id="spAct" type="text" inputmode="decimal" placeholder="4"/></div>
+      </div>
+      <div class="field half">
+        <label>LCR %</label>
+        <div class="input-wrap"><input id="lcr" type="text" inputmode="decimal" placeholder="75" class="has-sfx"/><span class="sfx">%</span></div>
+      </div>
+      <div class="field half">
+        <label>Leakage %</label>
+        <div class="input-wrap"><input id="leak" type="text" inputmode="decimal" placeholder="8" class="has-sfx"/><span class="sfx">%</span></div>
+      </div>
+      <div class="field half">
+        <label>Vintage</label>
+        <select id="vintage">
+          <option value="M0-M3">M0–M3</option>
+          <option value="M4-M12" selected>M4–M12</option>
+          <option value="M13+">M13+</option>
+        </select>
+      </div>
+      <div class="field half">
+        <label>Active in First 10 Days?</label>
+        <div class="tog-wrap on" id="togWrap" onclick="toggleFLS()">
+          <div class="tog-track on" id="togTrack"><div class="tog-thumb"></div></div>
+          <span class="tog-label" id="togLabel">Yes</span>
+        </div>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate Incentive</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results" class="hidden"></div>
+</div>
+
+<script>
+// ── Toggle ──
+let flsActive = true;
+function toggleFLS() {
+  flsActive = !flsActive;
+  const w = document.getElementById('togWrap');
+  const t = document.getElementById('togTrack');
+  const l = document.getElementById('togLabel');
+  w.classList.toggle('on', flsActive);
+  t.classList.toggle('on', flsActive);
+  l.textContent = flsActive ? 'Yes' : 'No';
+}
+
+// ── Numeric input sanitisation ──
+document.querySelectorAll('input[inputmode="decimal"]').forEach(el => {
+  el.addEventListener('input', function() {
+    let v = this.value.replace(/[^0-9.]/g, '');
+    const parts = v.split('.');
+    if (parts.length > 2) v = parts[0] + '.' + parts.slice(1).join('');
+    if (v.length > 1 && v[0] === '0' && v[1] !== '.') v = v.replace(/^0+/, '') || '0';
+    this.value = v;
+  });
+});
+
+// ── Helpers ──
+const inr = v => '₹' + Math.round(v).toLocaleString('en-IN');
+
+function g(id) { return document.getElementById(id).value.trim(); }
+
+// ── Calc functions ──
+function slabRate(achPct, vintage) {
+  if (achPct >= 300) return 1.50;
+  if (achPct >= 200) return 1.30;
+  if (achPct >= 150) return 1.20;
+  if (achPct >= 125) return 1.10;
+  if (achPct >= 100) return 1.00;
+  if (vintage === 'M13+') return 0;
+  if (achPct >= 85) return 0.60;
+  if (achPct >= 70) return 0.40;
+  if (achPct >= 60) return 0.40;
+  return 0;
+}
+
+function persMult(pPct, pTgt, vintage) {
+  if (vintage === 'M0-M3') return 1.00;
+  if (pPct >= pTgt + 4) return 1.15;
+  if (pPct >= pTgt + 2) return 1.10;
+  if (pPct >= pTgt || pPct >= 90) return 1.00;
+  if (pPct >= pTgt - 5) return 0.85;
+  if (pPct >= pTgt - 10) return 0.70;
+  return 0.50;
+}
+
+function nopBonus(nop, vintage) {
+  if (nop >= 8) return nop * 600;
+  if (nop >= 5) return nop * 500;
+  if (nop === 4) return 2000;
+  if (nop === 3) return (vintage === 'M0-M3' || vintage === 'M4-M12') ? 1500 : 0;
+  if (nop === 2) return vintage === 'M0-M3' ? 1000 : 0;
+  return 0;
+}
+
+function actBonus(br, sp) { return (br >= 2 || sp >= 4) ? 2000 : 0; }
+function smpBonus(lcr, nop, trad) { return (lcr >= 75 && nop >= 4 && trad >= 1) ? 1500 : 0; }
+
+function leakDocker(p) {
+  if (p >= 50) return 0.50; if (p >= 40) return 0.40; if (p >= 30) return 0.30;
+  if (p >= 20) return 0.20; if (p >= 15) return 0.15; if (p >= 10) return 0.10;
+  if (p >= 5)  return 0.05; return 0;
+}
+
+function runCalc(i) {
+  const achPct = i.tgt > 0 ? (i.achieved / i.tgt) * 100 : 0;
+  const slab   = slabRate(achPct, i.vintage);
+  const pm     = persMult(i.persPct, i.persTgt, i.vintage);
+  const base   = Math.round(i.achieved * (slab / 100) * pm);
+  const nop    = nopBonus(i.nop, i.vintage);
+  const act    = actBonus(i.brAct, i.spAct);
+  const smp    = smpBonus(i.lcr, i.nop, i.trad);
+  const smpD   = { lcr: i.lcr >= 75, nop: i.nop >= 4, trad: i.trad >= 1,
+    met: [i.lcr >= 75, i.nop >= 4, i.trad >= 1].filter(Boolean).length };
+  const gross  = base + nop + act + smp;
+  const capped = Math.min(gross, 200000);
+  const wasCapped = gross > 200000;
+  let flsDock = 0;
+  if (!i.flsActive && achPct < 100) flsDock = Math.round(capped * 0.50);
+  const afterFls = capped - flsDock;
+  const dkPct    = leakDocker(i.leak);
+  const leakDock = Math.round(afterFls * dkPct);
+  const final_   = afterFls - leakDock;
+
+  const losses = []; let totalLoss = 0;
+
+  if (smp === 0 && (i.nop >= 2 || achPct >= 60)) {
+    losses.push({ label: 'SMP Bonus missed', amount: 1500,
+      reason: `Need: LCR≥75%${smpD.lcr?'✅':'❌'} + NOP≥4${smpD.nop?'✅':'❌'} + Trad≥1${smpD.trad?'✅':'❌'}` });
+    totalLoss += 1500;
+  }
+  if (act === 0 && (i.brAct > 0 || i.spAct > 0 || achPct >= 60)) {
+    losses.push({ label: 'Activation Bonus missed', amount: 2000,
+      reason: `Need: ${Math.max(0,2-i.brAct)} more Branch OR ${Math.max(0,4-i.spAct)} more SP` });
+    totalLoss += 2000;
+  }
+  if (flsDock > 0) {
+    losses.push({ label: 'FLS 50% Docking', amount: flsDock, reason: 'Not active in first 10 days + target not met' });
+    totalLoss += flsDock;
+  }
+  if (leakDock > 0) {
+    losses.push({ label: `Leakage Docker (${Math.round(dkPct*100)}%)`, amount: leakDock,
+      reason: `${i.leak}% leakage → ${Math.round(dkPct*100)}% deducted` });
+    totalLoss += leakDock;
+  }
+  if (pm < 1.00 && i.vintage !== 'M0-M3' && slab > 0) {
+    const persLoss = Math.round(i.achieved * (slab/100)) - base;
+    if (persLoss > 0) {
+      losses.push({ label: `Persistency Penalty (${Math.round(pm*100)}%)`, amount: persLoss,
+        reason: `Multiplier ${Math.round(pm*100)}% instead of 100%` });
+      totalLoss += persLoss;
+    }
+  }
+  const nextSlabs = [{p:60,r:.40},{p:70,r:.40},{p:85,r:.60},{p:100,r:1.00},{p:125,r:1.10},{p:150,r:1.20},{p:200,r:1.30},{p:300,r:1.50}];
+  for (const {p,r} of nextSlabs) {
+    if (achPct < p && achPct >= Math.max(0,p-25) && r > slab) {
+      if (p <= 85 && i.vintage === 'M13+') continue;
+      const need = Math.ceil((p/100)*i.tgt), gap = need - i.achieved;
+      const lift = Math.round(need*(r/100)*pm) - base;
+      if (lift > 0 && gap > 0) {
+        losses.push({ label: `Slab gap (${achPct.toFixed(0)}%→${p}%)`, amount: lift,
+          reason: `${inr(gap)} more WFYP → slab ${slab}%→${r}%` });
+        totalLoss += lift;
+      }
+      break;
+    }
+  }
+
+  const steps = [
+    { l:'WFYP Achievement',    v:`${i.achieved.toLocaleString('en-IN')} ÷ ${i.tgt.toLocaleString('en-IN')} = ${achPct.toFixed(1)}%` },
+    { l:'Slab Rate',           v:`${achPct.toFixed(0)}% achievement → ${slab}% payout rate` },
+    { l:'Persistency Mult',    v:`${i.persPct}% vs target ${i.persTgt}% → ${Math.round(pm*100)}%${i.vintage==='M0-M3'?' (N/A for M0-M3)':''}` },
+    { l:'Base Incentive',      v:`₹${i.achieved.toLocaleString('en-IN')} × ${slab}% × ${Math.round(pm*100)}%`, amt: base },
+    { l:'NOP Bonus',           v:`${i.nop} NOP at ${i.vintage} → ${inr(nop)}`, amt: nop },
+    { l:'Activation Bonus',    v:`Branch:${i.brAct} SP:${i.spAct} → ${act>0?'✅':'❌'} ${inr(act)}`, amt: act },
+    { l:'SMP Bonus',           v:`LCR≥75:${smpD.lcr?'✅':'❌'} NOP≥4:${smpD.nop?'✅':'❌'} Trad≥1:${smpD.trad?'✅':'❌'} → ${inr(smp)}`, amt: smp },
+    { l:'Gross Total',         v:`${inr(gross)}`, amt: gross },
+  ];
+  if (wasCapped) steps.push({ l:'₹2L Capping', v:`${inr(gross)} → ₹2,00,000`, amt: -(gross-200000) });
+  if (flsDock > 0) steps.push({ l:'FLS 50% Dock', v:'Not active in first 10 days + <100%', amt: -flsDock });
+  if (leakDock > 0) steps.push({ l:`Leakage (${Math.round(dkPct*100)}%)`, v:`${i.leak}% leakage rate`, amt: -leakDock });
+  steps.push({ l:'FINAL PAYOUT', v:`${inr(final_)}`, amt: final_, final: true });
+
+  return { achPct, slab, pm, base, nop, act, smp, smpD, gross, capped, wasCapped,
+    flsDock, flsApplied: flsDock > 0, dkPct, leakDock, final: final_, losses, totalLoss, steps };
+}
+
+// ── Context-aware NOP insight ──
+function buildNopInsight(nopCount, vintage, currentNopBonus) {
+  const cur = currentNopBonus;
+  const nxt = nopBonus(nopCount + 1, vintage);
+  const lift = nxt - cur;
+
+  // Already at NOP 8+ — each policy adds ₹600
+  if (nopCount >= 8) return {
+    icon:'🎯', tag:'NOP BONUS', ur:'orange', amt:600,
+    msg:`${nopCount} policies → ${inr(cur)} bonus. Each extra policy adds ₹600.`,
+    act:`Close 1 more policy → ${inr(cur + 600)} NOP bonus.`
+  };
+
+  // Next policy gives zero lift — find the real target
+  if (lift <= 0) {
+    let jn = nopCount + 2, jl = 0;
+    while (jn <= 8 && jl <= 0) { jl = nopBonus(jn, vintage) - cur; jn++; }
+    jn--;
+    if (jl <= 0) return null;
+    const need = jn - nopCount;
+    return {
+      icon:'🎯', tag:'NOP BONUS', ur:'orange', amt:jl,
+      msg:`${nopCount} policies → ₹0 NOP bonus. Bonus starts at ${jn} policies → ${inr(jl)}.`,
+      act:`Get ${need} more polic${need > 1 ? 'ies' : 'y'} → ${inr(cur + jl)} NOP bonus.`
+    };
+  }
+
+  // NOP 7→8: special jump (rate changes from ₹500 to ₹600 per policy for all)
+  if (nopCount === 7) return {
+    icon:'🔥', tag:'NOP BONUS', ur:'red', amt:lift,
+    msg:`7 policies → ₹3,500 NOP bonus. 1 more policy = +₹1,300 extra. Rate upgrades to ₹600/policy.`,
+    act:`Close 1 more policy → NOP bonus becomes ₹4,800.`
+  };
+
+  // Standard: show current → next simply
+  const urgency = (nopCount === 3 || (nopCount < 3 && cur === 0)) ? 'red' : 'orange';
+  const icon = urgency === 'red' ? '🔥' : '🎯';
+  return {
+    icon, tag:'NOP BONUS', ur: urgency, amt: lift,
+    msg:`${nopCount} polic${nopCount === 1 ? 'y' : 'ies'} → ${cur > 0 ? inr(cur) : '₹0'} NOP bonus. 1 more policy = +${inr(lift)} extra.`,
+    act:`Close 1 more policy → NOP bonus becomes ${inr(nxt)}.`
+  };
+}
+
+// ── Build all insights ──
+function buildInsights(inp, c) {
+  const ins = [];
+  const { tgt, achieved, persPct, persTgt, nop: nopCount, brAct, spAct, trad, lcr, leak, vintage } = inp;
+  const ach = c.achPct;
+
+  // FLS
+  if (c.flsApplied) {
+    const gap = Math.max(0, Math.ceil(tgt - achieved));
+    ins.push({ icon:'🚨', tag:'LOSING 50%', ur:'red', amt:c.flsDock,
+      msg:`FLS 50% docking is active — you're losing ${inr(c.flsDock)} this month.`,
+      act: gap > 0 ? `Hit 100% target (${inr(gap)} more WFYP) → docking fully reversed.` : 'Next month: login within first 10 days.' });
+  }
+
+  // Next slab
+  const slabs = [{p:60,r:.40},{p:70,r:.40},{p:85,r:.60},{p:100,r:1.00},{p:125,r:1.10},{p:150,r:1.20},{p:200,r:1.30},{p:300,r:1.50}];
+  for (const {p,r} of slabs) {
+    if (ach < p && ach >= Math.max(0, p-25)) {
+      if (p <= 85 && vintage === 'M13+') continue;
+      const need = Math.ceil((p/100)*tgt), gap = need - achieved;
+      if (gap <= 0 || r <= c.slab) break;
+      const lift = Math.round(need*(r/100)*c.pm) - c.base;
+      if (lift <= 0) break;
+      const flsRev = p === 100 && c.flsApplied ? c.flsDock : 0;
+      ins.push({ icon:p===100?'🔥':'📈', tag:p===100?'CROSS 100%':`NEXT SLAB: ${p}%`,
+        ur:gap<=tgt*0.1?'red':'orange', amt:lift+flsRev,
+        msg:`At ${ach.toFixed(1)}%, you're ${inr(gap)} WFYP away from ${p}%. Slab: ${c.slab}% → ${r}%.${flsRev>0?' Crossing 100% also reverses FLS docking.':''}`,
+        act:`+${inr(lift)} base${flsRev>0?` + ${inr(flsRev)} FLS reversal = ${inr(lift+flsRev)} total`:''}.` });
+      break;
+    }
+  }
+
+  // M13+ zero base
+  if (vintage === 'M13+' && ach < 100 && c.base === 0) {
+    ins.push({ icon:'⚠️', tag:'NO BASE PAYOUT', ur:'red', amt:Math.round(tgt*0.01*c.pm),
+      msg:`M13+ requires 100%+ achievement for any base incentive. You're at ${ach.toFixed(1)}% — currently ₹0 base.`,
+      act:`${inr(Math.max(0,Math.ceil(tgt-achieved)))} more WFYP → crosses 100% → unlocks 1.00% slab.` });
+  }
+
+  // Leakage
+  if (leak >= 5 && c.leakDock > 0) {
+    const tiers=[5,10,15,20,30,40,50]; let curTier=5;
+    for (const t of tiers) { if (leak >= t) curTier = t; }
+    const save = Math.round((c.capped - c.flsDock) * (c.dkPct - leakDocker(curTier-1)));
+    ins.push({ icon:'🛡️', tag:`LEAKAGE ${leak}%`, ur:leak>=20?'red':'orange', amt:save,
+      msg:`${Math.round(c.dkPct*100)}% docker applied → losing ${inr(c.leakDock)}. Dropping below ${curTier}% recovers ${inr(save)}.`,
+      act:`Follow up on pending issuances. Every % reduction in leakage = direct money recovered.` });
+  }
+
+  // SMP
+  if (c.smp === 0) {
+    const {lcr:cL,nop:cN,trad:cT,met} = c.smpD;
+    const miss = [];
+    if (!cL) miss.push(`LCR to 75% (now ${lcr}%, need ${75-lcr}% more)`);
+    if (!cN) miss.push(`NOP to 4 (now ${nopCount}, need ${4-nopCount} more)`);
+    if (!cT) miss.push(`1 Traditional policy (now ${trad})`);
+    const nopKick = (!cN && nopCount < 4) ? (nopBonus(4,vintage) - c.nop) : 0;
+    ins.push({ icon:'💎', tag:`SMP: ${met}/3 CRITERIA`, ur:met>=2?'red':'orange', amt:1500+Math.max(0,nopKick),
+      msg:`₹1,500 SMP requires all 3: LCR≥75%${cL?'✅':'❌'} | NOP≥4${cN?'✅':'❌'} | Trad≥1${cT?'✅':'❌'}`,
+      act:met===2 ? `Only 1 gap: ${miss[0]} → ${inr(1500+Math.max(0,nopKick))} unlocked.` : `Fix: ${miss.join(' & ')}.` });
+  }
+
+  // NOP — context-aware
+  const nopIns = buildNopInsight(nopCount, vintage, c.nop);
+  if (nopIns) ins.push(nopIns);
+
+  // Activation
+  if (c.act === 0) {
+    const bG=Math.max(0,2-brAct), sG=Math.max(0,4-spAct);
+    ins.push({ icon:'🚀', tag:'ACTIVATION ₹2,000', ur:(brAct>=1||spAct>=3)?'red':'orange', amt:2000,
+      msg:`₹2,000 activation needs: 2 Branch activations (have ${brAct}) OR 4 SP activations (have ${spAct}).`,
+      act:`${bG} more Branch activation${bG>1?'s':''} OR ${sG} more SP activation${sG>1?'s':''} → ₹2,000 unlocked.` });
+  }
+
+  // Persistency penalty
+  if (vintage !== 'M0-M3' && c.pm < 1.00) {
+    const pmPct = Math.round(c.pm*100);
+    const loss  = Math.round(achieved*(c.slab/100)*(1-c.pm));
+    const band  = c.pm===0.85?'Target−5% to Target':c.pm===0.70?'Target−10% to Target−5%':'Below Target−10%';
+    ins.push({ icon:'⚠️', tag:`PERSISTENCY ${pmPct}%`, ur:c.pm<=0.70?'red':'orange', amt:loss,
+      msg:`Persistency (${persPct}%) vs target (${persTgt}%) → ${band} → ${pmPct}% multiplier. Base is ${100-pmPct}% lower than it could be.`,
+      act:`Improve to ≥${persTgt}% → full 100% multiplier → +${inr(loss)} base.` });
+  }
+
+  // Positives
+  if (c.smp > 0) ins.push({icon:'✅',tag:'SMP ✅',ur:'green',amt:0,msg:'All 3 SMP criteria met → ₹1,500 secured.',act:''});
+  if (c.act > 0) ins.push({icon:'✅',tag:'ACTIVATION ✅',ur:'green',amt:0,msg:'₹2,000 activation bonus secured. Branch/SP contributions active.',act:''});
+  if (c.wasCapped) ins.push({icon:'🏆',tag:'₹2L CAP HIT',ur:'green',amt:0,msg:`Pre-cap payout: ${inr(c.gross)}. Keep leakage <5% to protect the full amount.`,act:''});
+  if (c.pm >= 1.10) ins.push({icon:'⭐',tag:'PERSISTENCY BOOST',ur:'green',amt:0,msg:`Persistency ${persPct}% is ${persPct-persTgt}%+ above target → ${Math.round(c.pm*100)}% multiplier bonus active.`,act:''});
+
+  const ord={red:0,orange:1,grey:2,green:3};
+  ins.sort((a,b)=>(ord[a.ur]??2)!==(ord[b.ur]??2)?(ord[a.ur]??2)-(ord[b.ur]??2):b.amt-a.amt);
+  return ins;
+}
+
+// ── Render helpers ──
+function tag(t, cls, html) { const e=document.createElement(t); e.className=cls||''; e.innerHTML=html||''; return e; }
+
+function renderInsight(ins) {
+  const d = document.createElement('div');
+  d.className = `insight ${ins.ur}`;
+  d.innerHTML = `
+    <div class="insight-head">
+      <span class="insight-icon">${ins.icon}</span>
+      <span class="insight-tag">${ins.tag}</span>
+      ${ins.amt > 0 ? `<span class="insight-gain">+${inr(ins.amt)}</span>` : ''}
+    </div>
+    <div class="insight-msg">${ins.msg}</div>
+    ${ins.act ? `<div class="insight-act">👉 ${ins.act}</div>` : ''}
+  `;
+  return d;
+}
+
+// ── Main calculate ──
+function calculate() {
+  const ptVal = parseFloat(g('persTgt')) || 86;
+  const ppRaw = parseFloat(g('persPct'));
+  const inp = {
+    tgt:      parseFloat(g('tgt'))     || 0,
+    achieved: parseFloat(g('achieved'))|| 0,
+    persPct:  isNaN(ppRaw) ? ptVal : ppRaw,
+    persTgt:  ptVal,
+    nop:      parseInt(g('nop'))       || 0,
+    brAct:    parseInt(g('brAct'))     || 0,
+    spAct:    parseInt(g('spAct'))     || 0,
+    trad:     parseInt(g('trad'))      || 0,
+    lcr:      parseFloat(g('lcr'))     || 0,
+    leak:     parseFloat(g('leak'))    || 0,
+    vintage:  document.getElementById('vintage').value,
+    flsActive,
+  };
+
+  const c   = runCalc(inp);
+  const ins = buildInsights(inp, c);
+  const actionIns   = ins.filter(i => i.ur === 'red' || i.ur === 'orange');
+  const positiveIns = ins.filter(i => i.ur === 'green');
+  const chartData   = [{n:'Base',v:c.base},{n:'NOP',v:c.nop},{n:'Activation',v:c.act},{n:'SMP',v:c.smp}].filter(d=>d.v>0);
+
+  const wrap = document.getElementById('results');
+  wrap.innerHTML = '';
+  wrap.classList.remove('hidden');
+
+  // ① Hero
+  const hero = document.createElement('div');
+  hero.className = 'hero';
+  const tags = [
+    c.wasCapped ? `<span class="hero-tag" style="background:#F77400;color:#FFFFFF">₹2L cap (pre: ${inr(c.gross)})</span>` : '',
+    c.flsApplied ? `<span class="hero-tag" style="background:#FFFFFF;color:#C91429;font-weight:700">⚠️ 50% FLS dock: −${inr(c.flsDock)}</span>` : '',
+    c.leakDock > 0 ? `<span class="hero-tag" style="background:#414042;color:#FFFFFF">Leakage (${Math.round(c.dkPct*100)}%): −${inr(c.leakDock)}</span>` : '',
+  ].filter(Boolean).join('');
+  hero.innerHTML = `
+    <div class="hero-label">Total Incentive This Month</div>
+    <div class="hero-amount">${inr(c.final)}</div>
+    <div class="hero-meta">Achievement: ${c.achPct.toFixed(1)}% | Slab: ${c.slab}% | Persistency: ${Math.round(c.pm*100)}%</div>
+    ${tags ? `<div class="hero-tags">${tags}</div>` : ''}
+  `;
+  wrap.appendChild(hero);
+
+  // ② Money You're Losing
+  if (c.losses.length > 0 && c.totalLoss > 0) {
+    const lc = document.createElement('div');
+    lc.className = 'losing-card';
+    const rows = c.losses.map(l=>`
+      <div class="losing-row">
+        <div style="flex:1;padding-right:10px">
+          <div class="losing-row-label">${l.label}</div>
+          <div class="losing-row-reason">${l.reason}</div>
+        </div>
+        <div class="losing-row-amt">−${inr(l.amount)}</div>
+      </div>`).join('');
+    lc.innerHTML = `
+      <div class="losing-header">
+        <div class="losing-title">💸 Money You're Losing</div>
+        <div class="losing-total-amt">−${inr(c.totalLoss)}/mo</div>
+      </div>
+      ${rows}
+      <div class="losing-footer">
+        <div class="losing-footer-label">Total left on the table</div>
+        <div class="losing-footer-amt">−${inr(c.totalLoss)}/month</div>
+      </div>
+      <div class="losing-note">That's ${inr(c.totalLoss*12)}/year. See action steps below ↓</div>
+    `;
+    wrap.appendChild(lc);
+  }
+
+  // ③ What To Do Next
+  if (actionIns.length > 0) {
+    const ac = document.createElement('div');
+    ac.className = 'card';
+    ac.innerHTML = '<div class="section-title">⚡ What To Do Next</div>';
+    actionIns.forEach(i => ac.appendChild(renderInsight(i)));
+    wrap.appendChild(ac);
+  }
+
+  // ④ Breakdown chart
+  if (chartData.length > 0) {
+    const bc = document.createElement('div');
+    bc.className = 'breakdown-card';
+    const max = Math.max(...chartData.map(d=>d.v), 1);
+    const svgH = chartData.length * 38 + 10;
+    const bars = chartData.map((d,i)=>{
+      const y=i*38, w=Math.max(4,(d.v/max)*240);
+      const colors=['#C91429','#F77400','#73B964','#7C2279'];
+      return `<g>
+        <text x="72" y="${y+21}" text-anchor="end" font-size="11" fill="#414042" font-weight="600">${d.n}</text>
+        <rect x="80" y="${y+5}" width="${w}" height="24" rx="5" fill="${colors[i%4]}"/>
+        <text x="${80+w+6}" y="${y+21}" font-size="11" fill="#77787B" font-weight="600">${inr(d.v)}</text>
+      </g>`;
+    }).join('');
+    bc.innerHTML = `
+      <div class="card-title">📊 Incentive Breakdown</div>
+      <svg width="100%" viewBox="0 0 380 ${svgH}" xmlns="http://www.w3.org/2000/svg">${bars}</svg>
+    `;
+    wrap.appendChild(bc);
+  }
+
+  // ⑤ Stat cards
+  const sg = document.createElement('div');
+  sg.className = 'stat-grid';
+  const stats = [
+    {l:'Base',v:inr(c.base),c:'#C91429'},
+    {l:'NOP Bonus',v:inr(c.nop),c:'#F77400'},
+    {l:'Activation',v:inr(c.act),c:'#73B964'},
+    {l:'SMP Bonus',v:inr(c.smp),c:'#7C2279'},
+    {l:'Deductions',v:(c.leakDock+c.flsDock)>0?`−${inr(c.leakDock+c.flsDock)}`:'₹0',c:(c.leakDock+c.flsDock)>0?'#C91429':'#73B964'},
+    {l:'Final',v:inr(c.final),c:'#8D1218'},
+  ];
+  stats.forEach(s=>{
+    const sc = document.createElement('div');
+    sc.className = 'stat-card';
+    sc.style.borderLeft = `3px solid ${s.c}`;
+    sc.innerHTML = `<div class="stat-label">${s.l}</div><div class="stat-value" style="color:${s.c}">${s.v}</div>`;
+    sg.appendChild(sc);
+  });
+  wrap.appendChild(sg);
+
+  // ⑥ What's going well
+  if (positiveIns.length > 0) {
+    const wc = document.createElement('div');
+    wc.className = 'well-card';
+    wc.innerHTML = '<div style="font-size:12px;font-weight:700;color:#73B964;margin-bottom:8px">✅ What\'s Going Well</div>';
+    positiveIns.forEach(i=>{
+      const r = document.createElement('div');
+      r.className = 'well-row';
+      r.innerHTML = `<span style="font-size:14px">${i.icon}</span><div><div class="well-tag">${i.tag}</div><div class="well-msg">${i.msg}</div></div>`;
+      wc.appendChild(r);
+    });
+    wrap.appendChild(wc);
+  }
+
+  // ⑦ Step-by-step
+  let stepsVisible = false;
+  const stBtn = document.createElement('button');
+  stBtn.className = 'steps-toggle';
+  stBtn.textContent = '▼ Show Step-by-Step Calculation';
+  wrap.appendChild(stBtn);
+
+  const stCard = document.createElement('div');
+  stCard.className = 'steps-card hidden';
+  stCard.innerHTML = '<div class="steps-title">🔢 How Your Payout Was Calculated</div>';
+  c.steps.forEach(s=>{
+    const row = document.createElement('div');
+    row.className = `step-row${s.final?' final':''}`;
+    const amtHtml = s.amt !== undefined
+      ? `<div class="step-amt" style="color:${s.final?'#C91429':s.amt<0?'#C91429':'#73B964'}">${s.amt<0?`−${inr(-s.amt)}`:inr(s.amt)}</div>`
+      : '';
+    row.innerHTML = `<div style="flex:1;padding-right:8px"><div class="step-lbl">${s.l}</div><div class="step-detail">${s.v}</div></div>${amtHtml}`;
+    stCard.appendChild(row);
+  });
+  wrap.appendChild(stCard);
+
+  stBtn.addEventListener('click', ()=>{
+    stepsVisible = !stepsVisible;
+    stCard.classList.toggle('hidden', !stepsVisible);
+    stBtn.textContent = stepsVisible ? '▲ Hide Step-by-Step Calculation' : '▼ Show Step-by-Step Calculation';
+  });
+
+  // Export
+  const expBtn = document.createElement('button');
+  expBtn.className = 'export-btn';
+  expBtn.textContent = '📤 Export / Print PDF';
+  expBtn.onclick = ()=>window.print();
+  wrap.appendChild(expBtn);
+
+  const note = document.createElement('div');
+  note.className = 'footer-note';
+  note.innerHTML = 'HDFC Branch Banking RO Incentive – April 2026 Structure<br>₹2L cap applied before leakage docker. Min ticket size applies to NOP & SMP.';
+  wrap.appendChild(note);
+
+  wrap.scrollIntoView({behavior:'smooth', block:'start'});
+}
+</script>
+</body>
+</html>
