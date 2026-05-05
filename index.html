@@ -135,15 +135,16 @@ select{width:100%;padding:9px 11px;border:1.5px solid #DCDDE2;border-radius:8px;
         <div class="hint">Enter amount in ₹, not %</div>
         <div class="field-err">Please fill this field</div>
       </div>
+         <div class="field half">
+        <label>Persistency Target %</label>
+        <div class="input-wrap"><input id="persTgt" type="text" inputmode="decimal" placeholder="e.g. 86" value="86" class="has-sfx"/><span class="sfx">%</span></div>
+      </div>
       <div class="field half">
         <label>Persistency %</label>
         <div class="input-wrap"><input id="persPct" type="text" inputmode="decimal" placeholder="e.g. 88" class="has-sfx"/><span class="sfx">%</span></div>
         <div class="hint">Blank = assume at target</div>
       </div>
-      <div class="field half">
-        <label>Persistency Target %</label>
-        <div class="input-wrap"><input id="persTgt" type="text" inputmode="decimal" placeholder="e.g. 86" value="86" class="has-sfx"/><span class="sfx">%</span></div>
-      </div>
+    
       <div class="field half">
         <label>NOP (Policies)</label>
         <div class="input-wrap"><input id="nop" type="text" inputmode="decimal" placeholder="e.g. 4"/></div>
