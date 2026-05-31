@@ -6,17 +6,31 @@
 <title>RO Incentive Calculator — HDFC × ABSLI</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
 <style>
+/* ── ABSLI Brand Palette ─────────────────────────────
+   Primary Red   #C91429   Dark Red    #8D1218
+   White         #FFFFFF   Cream       #FFF4DA
+   Orange        #F77400   Green       #73B964
+   Purple        #7C2279   Dark Grey   #414042
+   Mid Grey      #77787B   Light Grey  #DCDDE2
+───────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:#FFF4DA;min-height:100vh;padding-bottom:40px}
-input,select,button,textarea{font-family:inherit}
+input,select,button{font-family:inherit}
+
+/* Header */
 .header{background:#C91429;padding:20px 16px;color:#FFFFFF}
 .header-inner{max-width:560px;margin:0 auto;text-align:center}
 .header-eyebrow{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;opacity:.85;margin-bottom:4px}
 .header-title{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400}
 .header-sub{font-size:11px;opacity:.75;margin-top:3px}
+
 .wrap{max-width:560px;margin:0 auto;padding:14px 14px 0}
+
+/* Cards */
 .card{background:#FFFFFF;border-radius:12px;padding:16px 14px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:14px}
 .card-title{font-size:13px;font-weight:700;color:#414042;margin-bottom:14px}
+
+/* Fields */
 .fields{display:flex;flex-wrap:wrap;gap:10px}
 .field{flex:1 1 100%}
 .field.half{flex:1 1 45%;min-width:140px}
@@ -28,6 +42,8 @@ input,select,button,textarea{font-family:inherit}
 .input-wrap .sfx{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:12px;color:#77787B;font-weight:600;pointer-events:none}
 .input-wrap input.has-sfx{padding-right:34px}
 select{width:100%;padding:9px 11px;border:1.5px solid #DCDDE2;border-radius:8px;font-size:15px;color:#414042;background:#FFFFFF;outline:none}
+
+/* Toggle */
 .tog-wrap{display:flex;align-items:center;gap:8px;padding:7px 11px;border:1.5px solid #DCDDE2;border-radius:8px;background:#FFFFFF;cursor:pointer;user-select:none;transition:all .15s}
 .tog-wrap.on{border-color:#73B964;background:#FFFFFF}
 .tog-track{width:36px;height:20px;border-radius:10px;background:#DCDDE2;position:relative;flex-shrink:0;transition:background .2s}
@@ -36,769 +52,521 @@ select{width:100%;padding:9px 11px;border:1.5px solid #DCDDE2;border-radius:8px;
 .tog-track.on .tog-thumb{left:18px}
 .tog-label{font-size:13px;color:#77787B;font-weight:600}
 .tog-wrap.on .tog-label{color:#73B964}
+
+/* Button */
 .calc-btn{width:100%;margin-top:16px;padding:13px 0;background:#C91429;color:#FFFFFF;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.3px}
 .calc-btn:hover{background:#8D1218}
 
-/* ── STRUCTURE BUTTON ── */
-.structure-btn{width:100%;margin-top:10px;padding:11px 0;background:transparent;color:#8D1218;border:1.5px solid #C91429;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
-.structure-btn:hover{background:#FFF4DA}
-
-/* ── MODAL OVERLAY ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
-.modal-overlay.open{opacity:1;pointer-events:all}
-.modal-sheet{background:#FFFFFF;border-radius:20px 20px 0 0;width:100%;max-width:560px;max-height:92vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
-.modal-overlay.open .modal-sheet{transform:translateY(0)}
-.modal-header{padding:16px 18px 12px;border-bottom:1px solid #DCDDE2;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.modal-title{font-size:15px;font-weight:800;color:#414042}
-.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:#77787B;line-height:1;padding:4px}
-.modal-body{flex:1;overflow-y:auto;padding:16px 18px}
-
-/* ── STRUCTURE DOCUMENT VIEWER ── */
-.doc-meta{background:#FFF4DA;border-radius:10px;padding:12px 14px;margin-bottom:16px;border-left:4px solid #C91429}
-.doc-meta-label{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#77787B;font-weight:700}
-.doc-meta-value{font-size:13px;font-weight:700;color:#414042;margin-top:3px}
-.doc-meta-date{font-size:10px;color:#77787B;margin-top:2px}
-.doc-note{font-size:11px;color:#77787B;background:#FFFFFF;border:1px solid #DCDDE2;border-radius:8px;padding:10px 12px;margin-bottom:14px;line-height:1.5}
-.doc-image-wrap{border-radius:10px;overflow:hidden;border:1px solid #DCDDE2;margin-bottom:12px}
-.doc-image-wrap img{width:100%;display:block}
-.doc-pdf-link{display:flex;align-items:center;gap:10px;padding:13px 14px;background:#FFFFFF;border:1.5px solid #DCDDE2;border-radius:10px;text-decoration:none;color:#414042;font-size:13px;font-weight:700;margin-bottom:10px;transition:border-color .15s}
-.doc-pdf-link:hover{border-color:#C91429}
-.doc-pdf-icon{font-size:24px}
-.doc-pdf-meta{font-size:10px;color:#77787B;font-weight:400;margin-top:1px}
-.doc-text-section{background:#FFFFFF;border-radius:10px;padding:14px;border:1px solid #DCDDE2;margin-bottom:12px}
-.doc-text-section h3{font-size:13px;font-weight:800;color:#C91429;margin-bottom:10px;border-bottom:1px solid #DCDDE2;padding-bottom:6px}
-.doc-table{width:100%;border-collapse:collapse;font-size:11px}
-.doc-table th{background:#C91429;color:#FFFFFF;padding:6px 8px;text-align:left;font-weight:700}
-.doc-table td{padding:6px 8px;border-bottom:1px solid #DCDDE2;color:#414042}
-.doc-table tr:last-child td{border-bottom:none}
-.doc-table tr:nth-child(even) td{background:#FFF4DA}
-
-/* ── ADMIN BADGE ── */
-.admin-badge-btn{position:fixed;bottom:20px;right:16px;background:#414042;color:#FFFFFF;border:none;border-radius:50%;width:44px;height:44px;font-size:18px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);z-index:500;display:flex;align-items:center;justify-content:center}
-.admin-badge-btn:hover{background:#222}
-
-/* ── ADMIN MODAL ── */
-.admin-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;padding:16px}
-.admin-modal-overlay.open{opacity:1;pointer-events:all}
-.admin-modal{background:#FFFFFF;border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:24px 20px;transform:scale(.95);transition:transform .2s}
-.admin-modal-overlay.open .admin-modal{transform:scale(1)}
-.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.admin-title{font-size:16px;font-weight:800;color:#414042}
-.admin-close{background:none;border:none;font-size:22px;cursor:pointer;color:#77787B}
-.admin-section{margin-bottom:22px}
-.admin-section-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#77787B;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #DCDDE2}
-.admin-field{margin-bottom:12px}
-.admin-field label{display:block;font-size:11px;font-weight:700;color:#414042;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
-.admin-field input,.admin-field textarea,.admin-field select{width:100%;padding:9px 11px;border:1.5px solid #DCDDE2;border-radius:8px;font-size:13px;color:#414042;outline:none}
-.admin-field input:focus,.admin-field textarea:focus{border-color:#C91429}
-.admin-field textarea{resize:vertical;min-height:60px;font-size:12px}
-.admin-hint{font-size:10px;color:#77787B;margin-top:3px}
-.admin-btn{width:100%;padding:11px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px}
-.admin-btn.primary{background:#C91429;color:#FFFFFF}
-.admin-btn.primary:hover{background:#8D1218}
-.admin-btn.secondary{background:#DCDDE2;color:#414042;margin-top:8px}
-.admin-status{font-size:11px;padding:8px 10px;border-radius:6px;margin-top:8px;display:none}
-.admin-status.success{background:#E8F5E9;color:#2E7D32;display:block}
-.admin-status.error{background:#FFEBEE;color:#C91429;display:block}
-
-/* ── LOGIN SCREEN ── */
-.login-section{text-align:center;padding:10px 0}
-.login-icon{font-size:40px;margin-bottom:12px}
-.login-subtitle{font-size:12px;color:#77787B;margin-bottom:18px}
-.login-field{margin-bottom:12px;text-align:left}
-.login-field label{display:block;font-size:11px;font-weight:700;color:#414042;margin-bottom:4px}
-.login-field input{width:100%;padding:10px 12px;border:1.5px solid #DCDDE2;border-radius:8px;font-size:14px;color:#414042;outline:none}
-.login-field input:focus{border-color:#C91429}
-.login-err{font-size:11px;color:#C91429;font-weight:700;margin-top:6px;display:none}
-
-/* ── CURRENT DOC CARD ── */
-.current-doc-card{background:#FFF4DA;border-radius:10px;padding:14px;border:1px solid #DCDDE2;margin-bottom:16px}
-.current-doc-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#77787B;margin-bottom:8px}
-.current-doc-name{font-size:14px;font-weight:800;color:#414042}
-.current-doc-sub{font-size:11px;color:#77787B;margin-top:2px}
-
-/* ── TABS ── */
-.tabs{display:flex;gap:6px;margin-bottom:16px}
-.tab{flex:1;padding:8px;border:1.5px solid #DCDDE2;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;background:#FFFFFF;color:#77787B;text-align:center;transition:all .15s}
-.tab.active{background:#C91429;color:#FFFFFF;border-color:#C91429}
-
-/* ── EXISTING HTML ── */
+/* Hero result */
 .hero{background:#8D1218;border-radius:12px;padding:20px 18px;color:#FFFFFF;margin-bottom:10px;border-left:5px solid #F77400}
 .hero-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;opacity:.8}
 .hero-amount{font-family:'DM Serif Display',serif;font-size:38px;margin-top:4px}
 .hero-meta{font-size:11px;opacity:.75;margin-top:5px}
 .hero-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .hero-tag{font-size:10px;padding:2px 8px;border-radius:4px}
+
+/* Money losing */
 .losing-card{background:#FFFFFF;border:2px solid #C91429;border-radius:12px;padding:16px 14px;margin-bottom:10px}
 .losing-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .losing-title{font-size:14px;font-weight:800;color:#C91429}
 .losing-total-amt{font-size:17px;font-weight:800;color:#C91429}
-.losing-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid #DCDDE2}
-.losing-row:first-child{border-top:none}
-.losing-row-label{font-size:12px;font-weight:700;color:#414042;margin-bottom:2px}
-.losing-row-reason{font-size:10px;color:#77787B}
-.losing-row-amt{font-size:14px;font-weight:800;color:#C91429;flex-shrink:0}
-.losing-footer{background:#FFF4DA;border-radius:8px;padding:10px 12px;margin-top:12px;display:flex;justify-content:space-between;align-items:center}
-.losing-footer-label{font-size:11px;font-weight:700;color:#77787B}
-.losing-footer-amt{font-size:15px;font-weight:800;color:#C91429}
-.losing-note{font-size:10px;color:#77787B;margin-top:8px;text-align:center;font-style:italic}
-.insight{border-left:3px solid #C91429;padding:10px 12px;margin-bottom:8px;border-radius:6px;background:#FFF4DA}
-.insight-tag{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#C91429;font-weight:800;margin-bottom:3px}
-.insight-msg{font-size:12px;color:#414042;line-height:1.4}
-.insight.positive{border-color:#73B964;background:#E8F5E9}
-.insight.positive .insight-tag{color:#73B964}
-.section-title{font-size:13px;font-weight:800;color:#414042;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #DCDDE2}
-.breakdown-card{background:#FFFFFF;border-radius:12px;padding:16px 14px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:10px}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.stat-card{background:#FFFFFF;border-radius:10px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#77787B;font-weight:700}
-.stat-value{font-size:16px;font-weight:800;margin-top:4px}
-.well-card{background:#E8F5E9;border-radius:12px;padding:14px;margin-bottom:10px}
-.well-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+.losing-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid #DCDDE2}
+.losing-row:last-of-type{border-bottom:none}
+.losing-row-label{font-size:12px;font-weight:700;color:#414042}
+.losing-row-reason{font-size:10px;color:#77787B;margin-top:2px}
+.losing-row-amt{font-size:14px;font-weight:800;color:#C91429;white-space:nowrap}
+.losing-footer{margin-top:12px;padding:10px 12px;background:#C91429;border-radius:6px;display:flex;justify-content:space-between;align-items:center}
+.losing-footer-label{font-size:11px;font-weight:700;color:#FFFFFF}
+.losing-footer-amt{font-size:16px;font-weight:800;color:#FFFFFF}
+.losing-note{font-size:10px;color:#77787B;margin-top:6px;text-align:center}
+
+/* Insights */
+.section-title{font-size:14px;font-weight:800;color:#414042;margin-bottom:12px}
+.insight{border-radius:8px;padding:11px 12px;margin-bottom:8px;border-left:4px solid}
+.insight.red{background:#FFFFFF;border-color:#C91429;border:1px solid #DCDDE2;border-left:4px solid #C91429}
+.insight.orange{background:#FFFFFF;border:1px solid #DCDDE2;border-left:4px solid #F77400}
+.insight.green{background:#FFFFFF;border:1px solid #DCDDE2;border-left:4px solid #73B964}
+.insight-head{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.insight-icon{font-size:16px}
+.insight-tag{font-size:9px;font-weight:800;text-transform:uppercase;padding:2px 7px;border-radius:4px}
+.insight.red .insight-tag{color:#FFFFFF;background:#C91429}
+.insight.orange .insight-tag{color:#FFFFFF;background:#F77400}
+.insight.green .insight-tag{color:#FFFFFF;background:#73B964}
+.insight-gain{font-size:11px;font-weight:800;color:#73B964;margin-left:auto}
+.insight-msg{font-size:12px;color:#414042;line-height:1.55}
+.insight-act{font-size:11px;color:#8D1218;font-weight:700;margin-top:5px;padding-top:5px;border-top:1px solid #DCDDE2}
+
+/* Chart & stat cards */
+.breakdown-card{background:#FFFFFF;border-radius:12px;padding:16px 14px;margin-bottom:10px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.stat-card{background:#FFFFFF;border-radius:8px;padding:9px 10px;border:1px solid #DCDDE2}
+.stat-label{font-size:9px;color:#77787B;text-transform:uppercase;font-weight:600}
+.stat-value{font-size:14px;font-weight:800;margin-top:2px}
+
+/* What's going well */
+.well-card{background:#FFFFFF;border-radius:12px;padding:14px 14px;margin-bottom:10px}
+.well-row{background:#FFFFFF;border:1px solid #DCDDE2;border-left:4px solid #73B964;border-radius:8px;padding:9px 11px;display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
 .well-row:last-child{margin-bottom:0}
-.well-tag{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#73B964;font-weight:800;margin-bottom:2px}
-.well-msg{font-size:11px;color:#414042;line-height:1.4}
-.steps-toggle{width:100%;padding:11px 0;background:transparent;color:#8D1218;border:1.5px solid #C91429;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px;transition:all .15s;letter-spacing:.3px}
-.steps-toggle:hover{background:#FFF4DA}
-.steps-card{background:#FFFFFF;border-radius:12px;padding:16px 14px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:10px}
-.steps-card.hidden{display:none}
-.steps-title{font-size:13px;font-weight:800;color:#414042;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #DCDDE2}
-.step-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-top:1px solid #DCDDE2}
-.step-row:first-child{border-top:none}
-.step-row.final{background:#FFF4DA;border-radius:8px;padding:12px;margin-top:6px;border:none}
-.step-lbl{font-size:11px;font-weight:700;color:#414042;margin-bottom:2px}
-.step-detail{font-size:10px;color:#77787B;line-height:1.4}
-.step-amt{font-size:14px;font-weight:800;flex-shrink:0}
-.export-btn{width:100%;padding:11px 0;background:#73B964;color:#FFFFFF;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px;letter-spacing:.3px}
-.export-btn:hover{background:#5A9D4A}
-.footer-note{font-size:10px;color:#77787B;text-align:center;line-height:1.5;padding:12px;background:#FFFFFF;border-radius:8px}
-@media print{
-  body{background:#FFFFFF;padding:0}
-  .header,.calc-btn,.structure-btn,.steps-toggle,.export-btn,.admin-badge-btn{display:none!important}
-  .card,.breakdown-card,.losing-card,.well-card,.steps-card,.stat-card{box-shadow:none;page-break-inside:avoid}
-  .hero{page-break-after:avoid}
-}
+.well-tag{font-size:11px;font-weight:700;color:#73B964}
+.well-msg{font-size:11px;color:#414042;line-height:1.4;margin-top:1px}
+
+/* Steps */
+.steps-toggle{width:100%;padding:9px;background:#FFFFFF;border:1.5px solid #DCDDE2;border-radius:8px;font-size:12px;color:#77787B;cursor:pointer;margin-bottom:8px;font-weight:600}
+.steps-card{background:#FFFFFF;border-radius:12px;padding:14px 12px;margin-bottom:10px}
+.steps-title{font-size:12px;font-weight:700;color:#414042;margin-bottom:10px}
+.step-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 4px;border-bottom:1px solid #DCDDE2}
+.step-row.final{border-bottom:2px solid #C91429;background:#FFF4DA;border-radius:6px;padding:8px 6px}
+.step-lbl{font-size:11px;font-weight:600;color:#414042}
+.step-row.final .step-lbl{font-weight:800;color:#C91429}
+.step-detail{font-size:10px;color:#77787B;margin-top:1px}
+.step-amt{font-size:12px;font-weight:800;white-space:nowrap;align-self:center;padding-left:8px}
+.export-btn{width:100%;padding:10px;background:transparent;color:#C91429;border:1.5px solid #C91429;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:12px}
+.footer-note{font-size:10px;color:#77787B;text-align:center;line-height:1.6}
+.hidden{display:none}
+
+@media print{button{display:none!important}}
 </style>
 </head>
 <body>
+
 <div class="header">
   <div class="header-inner">
-    <div class="header-eyebrow">Bancassurance Channel</div>
-    <div class="header-title">RO Incentive Calculator</div>
-    <div class="header-sub">HDFC Branch Banking × Aditya Birla Sun Life Insurance</div>
+    <div class="header-eyebrow">HDFC Branch Banking × ABSLI</div>
+    <div class="header-title">RO Incentive Simulation</div>
+    <div class="header-sub">April 2026 Structure</div>
   </div>
 </div>
 
 <div class="wrap">
+
+  <!-- INPUTS -->
   <div class="card">
-    <div class="card-title">RO Incentive Inputs</div>
+    <div class="card-title">Your Numbers</div>
     <div class="fields">
-      <div class="field half">
-        <label>Total Premium</label>
-        <div class="input-wrap">
-          <input type="number" id="inp_tp" placeholder="0" class="has-sfx"/>
-          <div class="sfx">₹</div>
-        </div>
-        <div class="hint">Total premium collected this month</div>
-      </div>
-      <div class="field half">
-        <label>Target Premium</label>
-        <div class="input-wrap">
-          <input type="number" id="inp_tg" placeholder="0" class="has-sfx"/>
-          <div class="sfx">₹</div>
-        </div>
-        <div class="hint">Your assigned monthly target</div>
-      </div>
-      <div class="field half">
-        <label>FLS Rate</label>
-        <div class="input-wrap">
-          <input type="number" id="inp_fls" placeholder="0" step="0.01" class="has-sfx"/>
-          <div class="sfx">%</div>
-        </div>
-        <div class="hint">First Life Surrender %</div>
-      </div>
-      <div class="field half">
-        <label>Leakage Rate</label>
-        <div class="input-wrap">
-          <input type="number" id="inp_lkg" placeholder="0" step="0.01" class="has-sfx"/>
-          <div class="sfx">%</div>
-        </div>
-        <div class="hint">13th month leakage %</div>
+      <div class="field">
+        <label>WFYP Target (₹)</label>
+        <div class="input-wrap"><input id="tgt" type="text" inputmode="decimal" placeholder="500000"/></div>
+        <div class="hint">Enter amount in ₹</div>
       </div>
       <div class="field">
-        <label>New Online Policies (NOP)</label>
-        <div class="input-wrap">
-          <input type="number" id="inp_nop" placeholder="0"/>
-        </div>
-        <div class="hint">Min ticket size ≥₹1.2L</div>
+        <label>WFYP Achieved (₹)</label>
+        <div class="input-wrap"><input id="achieved" type="text" inputmode="decimal" placeholder="450000"/></div>
+        <div class="hint">Enter amount in ₹, not %</div>
       </div>
-      <div class="field">
-        <label>Scheme Milestone Policies (SMP)</label>
-        <div class="input-wrap">
-          <input type="number" id="inp_smp" placeholder="0"/>
-        </div>
-        <div class="hint">Min ticket size ≥₹1.2L</div>
+      <div class="field half">
+        <label>Persistency %</label>
+        <div class="input-wrap"><input id="persPct" type="text" inputmode="decimal" placeholder="88" class="has-sfx"/><span class="sfx">%</span></div>
+        <div class="hint">Blank = assume at target</div>
       </div>
-      <div class="field">
-        <label>Activation Region</label>
-        <select id="inp_region">
-          <option value="NA">Not in Activation</option>
-          <option value="W1">West 1</option>
-          <option value="W2">West 2</option>
-          <option value="N1">North 1</option>
-          <option value="N2">North 2</option>
-          <option value="S1">South 1</option>
-          <option value="S2">South 2</option>
-          <option value="E1">East 1</option>
-          <option value="E2">East 2</option>
+      <div class="field half">
+        <label>Persistency Target %</label>
+        <div class="input-wrap"><input id="persTgt" type="text" inputmode="decimal" placeholder="86" value="86" class="has-sfx"/><span class="sfx">%</span></div>
+      </div>
+      <div class="field half">
+        <label>NOP (Policies)</label>
+        <div class="input-wrap"><input id="nop" type="text" inputmode="decimal" placeholder="4"/></div>
+      </div>
+      <div class="field half">
+        <label>Traditional Policies</label>
+        <div class="input-wrap"><input id="trad" type="text" inputmode="decimal" placeholder="1"/></div>
+        <div class="hint">Out of NOP</div>
+      </div>
+      <div class="field half">
+        <label>Branch Activations</label>
+        <div class="input-wrap"><input id="brAct" type="text" inputmode="decimal" placeholder="2"/></div>
+      </div>
+      <div class="field half">
+        <label>SP Activations</label>
+        <div class="input-wrap"><input id="spAct" type="text" inputmode="decimal" placeholder="4"/></div>
+      </div>
+      <div class="field half">
+        <label>LCR %</label>
+        <div class="input-wrap"><input id="lcr" type="text" inputmode="decimal" placeholder="75" class="has-sfx"/><span class="sfx">%</span></div>
+      </div>
+      <div class="field half">
+        <label>Leakage %</label>
+        <div class="input-wrap"><input id="leak" type="text" inputmode="decimal" placeholder="8" class="has-sfx"/><span class="sfx">%</span></div>
+      </div>
+      <div class="field half">
+        <label>Vintage</label>
+        <select id="vintage">
+          <option value="M0-M3">M0–M3</option>
+          <option value="M4-M12" selected>M4–M12</option>
+          <option value="M13+">M13+</option>
         </select>
-        <div class="hint">Select if you're in an activation zone</div>
       </div>
-      <div class="field">
-        <label>First Month?</label>
-        <div class="tog-wrap" id="fm_toggle">
-          <div class="tog-track"><div class="tog-thumb"></div></div>
-          <div class="tog-label">No</div>
+      <div class="field half">
+        <label>Active in First 10 Days?</label>
+        <div class="tog-wrap on" id="togWrap" onclick="toggleFLS()">
+          <div class="tog-track on" id="togTrack"><div class="tog-thumb"></div></div>
+          <span class="tog-label" id="togLabel">Yes</span>
         </div>
-        <div class="hint">First-month ROs skip persistency docks</div>
       </div>
     </div>
-    <button class="calc-btn" id="calc_btn">💰 Calculate My Incentive</button>
-    <button class="structure-btn" id="struct_btn">
-      <span>📋</span>
-      <span>View Incentive Structure</span>
-    </button>
+    <button class="calc-btn" onclick="calculate()">Calculate Incentive</button>
   </div>
-</div>
 
-<!-- ═══════════════════════════════════════════════════════════════════════════ -->
-<!-- STRUCTURE MODAL -->
-<!-- ═══════════════════════════════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="structModal">
-  <div class="modal-sheet">
-    <div class="modal-header">
-      <div class="modal-title">RO Incentive Structure</div>
-      <button class="modal-close" id="structClose">×</button>
-    </div>
-    <div class="modal-body" id="structBody">
-      <!-- Dynamic content will load here -->
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════════════════ -->
-<!-- ADMIN BADGE & MODAL -->
-<!-- ═══════════════════════════════════════════════════════════════════════════ -->
-<button class="admin-badge-btn" id="adminBadge">⚙️</button>
-
-<div class="admin-modal-overlay" id="adminModal">
-  <div class="admin-modal">
-    <div class="admin-header">
-      <div class="admin-title">Admin Panel</div>
-      <button class="admin-close" id="adminClose">×</button>
-    </div>
-
-    <div id="adminLoginSection" class="login-section">
-      <div class="login-icon">🔐</div>
-      <div class="login-subtitle">Enter admin credentials to manage structure docs</div>
-      <div class="login-field">
-        <label>Username</label>
-        <input type="text" id="adminUser" autocomplete="username"/>
-      </div>
-      <div class="login-field">
-        <label>Password</label>
-        <input type="password" id="adminPass" autocomplete="current-password"/>
-      </div>
-      <div class="login-err" id="loginErr">Invalid credentials</div>
-      <button class="admin-btn primary" id="adminLoginBtn">Login</button>
-    </div>
-
-    <div id="adminControlSection" style="display:none">
-      <!-- Current Doc Display -->
-      <div class="current-doc-card">
-        <div class="current-doc-title">📄 Active Structure</div>
-        <div class="current-doc-name" id="currentDocName">—</div>
-        <div class="current-doc-sub" id="currentDocSub">—</div>
-      </div>
-
-      <!-- Tabs -->
-      <div class="tabs">
-        <div class="tab active" data-tab="upload">Upload New</div>
-        <div class="tab" data-tab="edit">Edit Text</div>
-      </div>
-
-      <!-- Upload Tab -->
-      <div class="admin-section" id="uploadTab">
-        <div class="admin-section-title">Upload Structure Document</div>
-        <div class="admin-field">
-          <label>Document Name</label>
-          <input type="text" id="adminDocName" placeholder="e.g., April 2026 RO Structure"/>
-          <div class="admin-hint">Identify this structure version</div>
-        </div>
-        <div class="admin-field">
-          <label>Effective Date</label>
-          <input type="date" id="adminDocDate"/>
-          <div class="admin-hint">When this structure goes live</div>
-        </div>
-        <div class="admin-field">
-          <label>Upload Image/PDF</label>
-          <input type="file" id="adminFileUpload" accept="image/*,application/pdf" style="padding:6px"/>
-          <div class="admin-hint">Structure doc image or PDF (max 5MB)</div>
-        </div>
-        <button class="admin-btn primary" id="adminUploadBtn">Upload Structure</button>
-        <div class="admin-status" id="uploadStatus"></div>
-      </div>
-
-      <!-- Edit Tab -->
-      <div class="admin-section" id="editTab" style="display:none">
-        <div class="admin-section-title">Edit Text Explanation</div>
-        <div class="admin-field">
-          <label>Structure Description</label>
-          <textarea id="adminTextContent" placeholder="Explain the structure, highlight key changes, etc."></textarea>
-          <div class="admin-hint">Plain text or simple HTML</div>
-        </div>
-        <button class="admin-btn primary" id="adminSaveTextBtn">Save Text</button>
-        <div class="admin-status" id="textStatus"></div>
-      </div>
-
-      <button class="admin-btn secondary" id="adminLogoutBtn">Logout</button>
-    </div>
-  </div>
+  <!-- RESULTS -->
+  <div id="results" class="hidden"></div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════════════
-// STORAGE
-// ═══════════════════════════════════════════════════════════════════════════
-const DB_KEY_STRUCT = 'ro_structure_doc';
-const DB_KEY_AUTH = 'ro_admin_auth';
-const ADMIN_CREDS = {user:'admin',pass:'absli2026'};
-
-function saveToDB(key,val){localStorage.setItem(key,JSON.stringify(val))}
-function loadFromDB(key){const d=localStorage.getItem(key);return d?JSON.parse(d):null}
-function clearDB(key){localStorage.removeItem(key)}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// TOGGLE
-// ═══════════════════════════════════════════════════════════════════════════
-let fmOn = false;
-const fmToggle = document.getElementById('fm_toggle');
-const fmTrack = fmToggle.querySelector('.tog-track');
-const fmLabel = fmToggle.querySelector('.tog-label');
-fmToggle.addEventListener('click', ()=>{
-  fmOn = !fmOn;
-  fmToggle.classList.toggle('on', fmOn);
-  fmTrack.classList.toggle('on', fmOn);
-  fmLabel.textContent = fmOn ? 'Yes' : 'No';
-});
-
-// ═══════════════════════════════════════════════════════════════════════════
-// STRUCTURE MODAL
-// ═══════════════════════════════════════════════════════════════════════════
-const structBtn = document.getElementById('struct_btn');
-const structModal = document.getElementById('structModal');
-const structClose = document.getElementById('structClose');
-const structBody = document.getElementById('structBody');
-
-function openStructModal(){
-  structBody.innerHTML = '';
-  const doc = loadFromDB(DB_KEY_STRUCT);
-  if(!doc){
-    structBody.innerHTML = '<div class="doc-note">No structure document uploaded yet. Contact admin.</div>';
-  } else {
-    if(doc.name){
-      const meta = document.createElement('div');
-      meta.className = 'doc-meta';
-      meta.innerHTML = `
-        <div class="doc-meta-label">Document Name</div>
-        <div class="doc-meta-value">${doc.name}</div>
-        ${doc.date?`<div class="doc-meta-date">Effective: ${doc.date}</div>`:''}
-      `;
-      structBody.appendChild(meta);
-    }
-    if(doc.note){
-      const noteDiv = document.createElement('div');
-      noteDiv.className = 'doc-note';
-      noteDiv.textContent = doc.note;
-      structBody.appendChild(noteDiv);
-    }
-    if(doc.file){
-      const {type,data} = doc.file;
-      if(type.startsWith('image/')){
-        const wrap = document.createElement('div');
-        wrap.className = 'doc-image-wrap';
-        wrap.innerHTML = `<img src="${data}" alt="Structure Document"/>`;
-        structBody.appendChild(wrap);
-      } else if(type === 'application/pdf'){
-        const link = document.createElement('a');
-        link.className = 'doc-pdf-link';
-        link.href = data;
-        link.download = 'RO_Structure.pdf';
-        link.innerHTML = `
-          <div class="doc-pdf-icon">📄</div>
-          <div>
-            <div>RO Incentive Structure PDF</div>
-            <div class="doc-pdf-meta">Click to download</div>
-          </div>
-        `;
-        structBody.appendChild(link);
-      }
-    }
-    if(doc.textContent){
-      const txtDiv = document.createElement('div');
-      txtDiv.className = 'doc-text-section';
-      txtDiv.innerHTML = `<h3>Structure Details</h3>${doc.textContent}`;
-      structBody.appendChild(txtDiv);
-    }
-  }
-  structModal.classList.add('open');
+// ── Toggle ──
+let flsActive = true;
+function toggleFLS() {
+  flsActive = !flsActive;
+  const w = document.getElementById('togWrap');
+  const t = document.getElementById('togTrack');
+  const l = document.getElementById('togLabel');
+  w.classList.toggle('on', flsActive);
+  t.classList.toggle('on', flsActive);
+  l.textContent = flsActive ? 'Yes' : 'No';
 }
-function closeStructModal(){structModal.classList.remove('open')}
 
-structBtn.addEventListener('click', openStructModal);
-structClose.addEventListener('click', closeStructModal);
-structModal.addEventListener('click', (e)=>{if(e.target===structModal) closeStructModal()});
-
-// ═══════════════════════════════════════════════════════════════════════════
-// ADMIN MODAL
-// ═══════════════════════════════════════════════════════════════════════════
-const adminBadge = document.getElementById('adminBadge');
-const adminModal = document.getElementById('adminModal');
-const adminClose = document.getElementById('adminClose');
-const adminLoginSection = document.getElementById('adminLoginSection');
-const adminControlSection = document.getElementById('adminControlSection');
-
-const adminUser = document.getElementById('adminUser');
-const adminPass = document.getElementById('adminPass');
-const adminLoginBtn = document.getElementById('adminLoginBtn');
-const loginErr = document.getElementById('loginErr');
-
-const uploadTab = document.getElementById('uploadTab');
-const editTab = document.getElementById('editTab');
-const tabs = document.querySelectorAll('.tab');
-
-const currentDocName = document.getElementById('currentDocName');
-const currentDocSub = document.getElementById('currentDocSub');
-
-const adminDocName = document.getElementById('adminDocName');
-const adminDocDate = document.getElementById('adminDocDate');
-const adminFileUpload = document.getElementById('adminFileUpload');
-const adminUploadBtn = document.getElementById('adminUploadBtn');
-const uploadStatus = document.getElementById('uploadStatus');
-
-const adminTextContent = document.getElementById('adminTextContent');
-const adminSaveTextBtn = document.getElementById('adminSaveTextBtn');
-const textStatus = document.getElementById('textStatus');
-
-const adminLogoutBtn = document.getElementById('adminLogoutBtn');
-
-let adminLoggedIn = false;
-
-function openAdminModal(){
-  const auth = loadFromDB(DB_KEY_AUTH);
-  if(auth && auth.loggedIn){
-    adminLoggedIn = true;
-    adminLoginSection.style.display = 'none';
-    adminControlSection.style.display = 'block';
-    loadCurrentDoc();
-  } else {
-    adminLoggedIn = false;
-    adminLoginSection.style.display = 'block';
-    adminControlSection.style.display = 'none';
-  }
-  adminModal.classList.add('open');
-}
-function closeAdminModal(){adminModal.classList.remove('open')}
-
-adminBadge.addEventListener('click', openAdminModal);
-adminClose.addEventListener('click', closeAdminModal);
-adminModal.addEventListener('click', (e)=>{if(e.target===adminModal) closeAdminModal()});
-
-adminLoginBtn.addEventListener('click', ()=>{
-  loginErr.style.display = 'none';
-  const u = adminUser.value.trim();
-  const p = adminPass.value;
-  if(u === ADMIN_CREDS.user && p === ADMIN_CREDS.pass){
-    saveToDB(DB_KEY_AUTH, {loggedIn:true});
-    adminLoggedIn = true;
-    adminLoginSection.style.display = 'none';
-    adminControlSection.style.display = 'block';
-    loadCurrentDoc();
-  } else {
-    loginErr.style.display = 'block';
-  }
-});
-
-adminLogoutBtn.addEventListener('click', ()=>{
-  clearDB(DB_KEY_AUTH);
-  adminLoggedIn = false;
-  closeAdminModal();
-});
-
-tabs.forEach(tab => {
-  tab.addEventListener('click', ()=>{
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    const target = tab.getAttribute('data-tab');
-    if(target === 'upload'){
-      uploadTab.style.display = 'block';
-      editTab.style.display = 'none';
-    } else {
-      uploadTab.style.display = 'none';
-      editTab.style.display = 'block';
-    }
+// ── Numeric input sanitisation ──
+document.querySelectorAll('input[inputmode="decimal"]').forEach(el => {
+  el.addEventListener('input', function() {
+    let v = this.value.replace(/[^0-9.]/g, '');
+    const parts = v.split('.');
+    if (parts.length > 2) v = parts[0] + '.' + parts.slice(1).join('');
+    if (v.length > 1 && v[0] === '0' && v[1] !== '.') v = v.replace(/^0+/, '') || '0';
+    this.value = v;
   });
 });
 
-function loadCurrentDoc(){
-  const doc = loadFromDB(DB_KEY_STRUCT);
-  if(doc && doc.name){
-    currentDocName.textContent = doc.name;
-    currentDocSub.textContent = doc.date ? `Effective: ${doc.date}` : '—';
-    adminTextContent.value = doc.textContent || '';
-  } else {
-    currentDocName.textContent = 'No document uploaded';
-    currentDocSub.textContent = '—';
-    adminTextContent.value = '';
-  }
-}
+// ── Helpers ──
+const inr = v => '₹' + Math.round(v).toLocaleString('en-IN');
 
-adminUploadBtn.addEventListener('click', ()=>{
-  uploadStatus.className = 'admin-status';
-  const name = adminDocName.value.trim();
-  const date = adminDocDate.value;
-  const file = adminFileUpload.files[0];
-  if(!name){
-    uploadStatus.textContent = 'Document name required';
-    uploadStatus.classList.add('error');
-    return;
-  }
-  if(!file){
-    uploadStatus.textContent = 'File required';
-    uploadStatus.classList.add('error');
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = (e)=>{
-    const existing = loadFromDB(DB_KEY_STRUCT) || {};
-    const updated = {
-      ...existing,
-      name,
-      date: date || existing.date,
-      file: {type: file.type, data: e.target.result}
-    };
-    saveToDB(DB_KEY_STRUCT, updated);
-    uploadStatus.textContent = '✅ Structure uploaded successfully';
-    uploadStatus.classList.add('success');
-    loadCurrentDoc();
-    adminDocName.value = '';
-    adminDocDate.value = '';
-    adminFileUpload.value = '';
-  };
-  reader.readAsDataURL(file);
-});
+function g(id) { return document.getElementById(id).value.trim(); }
 
-adminSaveTextBtn.addEventListener('click', ()=>{
-  textStatus.className = 'admin-status';
-  const txt = adminTextContent.value.trim();
-  const existing = loadFromDB(DB_KEY_STRUCT) || {};
-  existing.textContent = txt;
-  saveToDB(DB_KEY_STRUCT, existing);
-  textStatus.textContent = '✅ Text saved';
-  textStatus.classList.add('success');
-});
-
-// ═══════════════════════════════════════════════════════════════════════════
-// INCENTIVE CALCULATION
-// ═══════════════════════════════════════════════════════════════════════════
-const inr = (amt) => `₹${amt.toLocaleString('en-IN')}`;
-
-const SLABS = [
-  {min:0,max:60,rate:0},
-  {min:60,max:80,rate:0.0050},
-  {min:80,max:90,rate:0.0063},
-  {min:90,max:100,rate:0.0070},
-  {min:100,max:110,rate:0.0075},
-  {min:110,max:120,rate:0.0080},
-  {min:120,max:Infinity,rate:0.0085}
-];
-
-const ACT_MATRIX = {
-  NA:0,
-  W1:15000, W2:20000,
-  N1:15000, N2:15000,
-  S1:18000, S2:20000,
-  E1:12000, E2:15000
-};
-
-const NOP_RATE = 250;
-const SMP_RATE = 500;
-const MIN_TICKET = 120000;
-const CAP_BEFORE_DOCK = 200000;
-
-function getSlab(achPct){
-  for(let s of SLABS){
-    if(achPct >= s.min && achPct < s.max) return s.rate;
-  }
+// ── Calc functions ──
+function slabRate(achPct, vintage) {
+  if (achPct >= 300) return 1.50;
+  if (achPct >= 200) return 1.30;
+  if (achPct >= 150) return 1.20;
+  if (achPct >= 125) return 1.10;
+  if (achPct >= 100) return 1.00;
+  if (vintage === 'M13+') return 0;
+  if (achPct >= 85) return 0.60;
+  if (achPct >= 70) return 0.40;
+  if (achPct >= 60) return 0.40;
   return 0;
 }
 
-document.getElementById('calc_btn').addEventListener('click', ()=>{
-  const tp = parseFloat(document.getElementById('inp_tp').value) || 0;
-  const tg = parseFloat(document.getElementById('inp_tg').value) || 1;
-  const fls = parseFloat(document.getElementById('inp_fls').value) || 0;
-  const lkg = parseFloat(document.getElementById('inp_lkg').value) || 0;
-  const nop = parseInt(document.getElementById('inp_nop').value) || 0;
-  const smp = parseInt(document.getElementById('inp_smp').value) || 0;
-  const region = document.getElementById('inp_region').value;
-  const fm = fmOn;
+function persMult(pPct, pTgt, vintage) {
+  if (vintage === 'M0-M3') return 1.00;
+  if (pPct >= pTgt + 4) return 1.15;
+  if (pPct >= pTgt + 2) return 1.10;
+  if (pPct >= pTgt || pPct >= 90) return 1.00;
+  if (pPct >= pTgt - 5) return 0.85;
+  if (pPct >= pTgt - 10) return 0.70;
+  return 0.50;
+}
 
-  const achPct = (tp/tg)*100;
-  const slabRate = getSlab(achPct);
-  const base = tp * slabRate;
-  const nopBonus = nop * NOP_RATE;
-  const smpBonus = smp * SMP_RATE;
-  const act = ACT_MATRIX[region] || 0;
+function nopBonus(nop, vintage) {
+  if (nop >= 8) return nop * 600;
+  if (nop >= 5) return nop * 500;
+  if (nop === 4) return 2000;
+  if (nop === 3) return (vintage === 'M0-M3' || vintage === 'M4-M12') ? 1500 : 0;
+  if (nop === 2) return vintage === 'M0-M3' ? 1000 : 0;
+  return 0;
+}
 
-  let grossBeforeDock = base + nopBonus + smpBonus + act;
-  let capped = grossBeforeDock;
-  let capApplied = false;
-  if(capped > CAP_BEFORE_DOCK){
-    capped = CAP_BEFORE_DOCK;
-    capApplied = true;
-  }
+function actBonus(br, sp) { return (br >= 2 || sp >= 4) ? 2000 : 0; }
+function smpBonus(lcr, nop, trad) { return (lcr >= 75 && nop >= 4 && trad >= 1) ? 1500 : 0; }
 
+function leakDocker(p) {
+  if (p >= 50) return 0.50; if (p >= 40) return 0.40; if (p >= 30) return 0.30;
+  if (p >= 20) return 0.20; if (p >= 15) return 0.15; if (p >= 10) return 0.10;
+  if (p >= 5)  return 0.05; return 0;
+}
+
+function runCalc(i) {
+  const achPct = i.tgt > 0 ? (i.achieved / i.tgt) * 100 : 0;
+  const slab   = slabRate(achPct, i.vintage);
+  const pm     = persMult(i.persPct, i.persTgt, i.vintage);
+  const base   = Math.round(i.achieved * (slab / 100) * pm);
+  const nop    = nopBonus(i.nop, i.vintage);
+  const act    = actBonus(i.brAct, i.spAct);
+  const smp    = smpBonus(i.lcr, i.nop, i.trad);
+  const smpD   = { lcr: i.lcr >= 75, nop: i.nop >= 4, trad: i.trad >= 1,
+    met: [i.lcr >= 75, i.nop >= 4, i.trad >= 1].filter(Boolean).length };
+  const gross  = base + nop + act + smp;
+  const capped = Math.min(gross, 200000);
+  const wasCapped = gross > 200000;
   let flsDock = 0;
-  let leakDock = 0;
-  const pm = Math.max(0, (100 - fls - lkg)/100);
+  if (!i.flsActive && achPct < 100) flsDock = Math.round(capped * 0.50);
+  const afterFls = capped - flsDock;
+  const dkPct    = leakDocker(i.leak);
+  const leakDock = Math.round(afterFls * dkPct);
+  const final_   = afterFls - leakDock;
 
-  if(!fm){
-    if(fls > 20) flsDock = capped * 0.25;
-    else if(fls > 15) flsDock = capped * 0.15;
-    else if(fls > 10) flsDock = capped * 0.10;
-    if(lkg > 20) leakDock = capped * 0.25;
-    else if(lkg > 15) leakDock = capped * 0.15;
-    else if(lkg > 10) leakDock = capped * 0.10;
+  const losses = []; let totalLoss = 0;
+
+  if (smp === 0 && (i.nop >= 2 || achPct >= 60)) {
+    losses.push({ label: 'SMP Bonus missed', amount: 1500,
+      reason: `Need: LCR≥75%${smpD.lcr?'✅':'❌'} + NOP≥4${smpD.nop?'✅':'❌'} + Trad≥1${smpD.trad?'✅':'❌'}` });
+    totalLoss += 1500;
+  }
+  if (act === 0 && (i.brAct > 0 || i.spAct > 0 || achPct >= 60)) {
+    losses.push({ label: 'Activation Bonus missed', amount: 2000,
+      reason: `Need: ${Math.max(0,2-i.brAct)} more Branch OR ${Math.max(0,4-i.spAct)} more SP` });
+    totalLoss += 2000;
+  }
+  if (flsDock > 0) {
+    losses.push({ label: 'FLS 50% Docking', amount: flsDock, reason: 'Not active in first 10 days + target not met' });
+    totalLoss += flsDock;
+  }
+  if (leakDock > 0) {
+    losses.push({ label: `Leakage Docker (${Math.round(dkPct*100)}%)`, amount: leakDock,
+      reason: `${i.leak}% leakage → ${Math.round(dkPct*100)}% deducted` });
+    totalLoss += leakDock;
+  }
+  if (pm < 1.00 && i.vintage !== 'M0-M3' && slab > 0) {
+    const persLoss = Math.round(i.achieved * (slab/100)) - base;
+    if (persLoss > 0) {
+      losses.push({ label: `Persistency Penalty (${Math.round(pm*100)}%)`, amount: persLoss,
+        reason: `Multiplier ${Math.round(pm*100)}% instead of 100%` });
+      totalLoss += persLoss;
+    }
+  }
+  const nextSlabs = [{p:60,r:.40},{p:70,r:.40},{p:85,r:.60},{p:100,r:1.00},{p:125,r:1.10},{p:150,r:1.20},{p:200,r:1.30},{p:300,r:1.50}];
+  for (const {p,r} of nextSlabs) {
+    if (achPct < p && achPct >= Math.max(0,p-25) && r > slab) {
+      if (p <= 85 && i.vintage === 'M13+') continue;
+      const need = Math.ceil((p/100)*i.tgt), gap = need - i.achieved;
+      const lift = Math.round(need*(r/100)*pm) - base;
+      if (lift > 0 && gap > 0) {
+        losses.push({ label: `Slab gap (${achPct.toFixed(0)}%→${p}%)`, amount: lift,
+          reason: `${inr(gap)} more WFYP → slab ${slab}%→${r}%` });
+        totalLoss += lift;
+      }
+      break;
+    }
   }
 
-  const final = capped - flsDock - leakDock;
+  const steps = [
+    { l:'WFYP Achievement',    v:`${i.achieved.toLocaleString('en-IN')} ÷ ${i.tgt.toLocaleString('en-IN')} = ${achPct.toFixed(1)}%` },
+    { l:'Slab Rate',           v:`${achPct.toFixed(0)}% achievement → ${slab}% payout rate` },
+    { l:'Persistency Mult',    v:`${i.persPct}% vs target ${i.persTgt}% → ${Math.round(pm*100)}%${i.vintage==='M0-M3'?' (N/A for M0-M3)':''}` },
+    { l:'Base Incentive',      v:`₹${i.achieved.toLocaleString('en-IN')} × ${slab}% × ${Math.round(pm*100)}%`, amt: base },
+    { l:'NOP Bonus',           v:`${i.nop} NOP at ${i.vintage} → ${inr(nop)}`, amt: nop },
+    { l:'Activation Bonus',    v:`Branch:${i.brAct} SP:${i.spAct} → ${act>0?'✅':'❌'} ${inr(act)}`, amt: act },
+    { l:'SMP Bonus',           v:`LCR≥75:${smpD.lcr?'✅':'❌'} NOP≥4:${smpD.nop?'✅':'❌'} Trad≥1:${smpD.trad?'✅':'❌'} → ${inr(smp)}`, amt: smp },
+    { l:'Gross Total',         v:`${inr(gross)}`, amt: gross },
+  ];
+  if (wasCapped) steps.push({ l:'₹2L Capping', v:`${inr(gross)} → ₹2,00,000`, amt: -(gross-200000) });
+  if (flsDock > 0) steps.push({ l:'FLS 50% Dock', v:'Not active in first 10 days + <100%', amt: -flsDock });
+  if (leakDock > 0) steps.push({ l:`Leakage (${Math.round(dkPct*100)}%)`, v:`${i.leak}% leakage rate`, amt: -leakDock });
+  steps.push({ l:'FINAL PAYOUT', v:`${inr(final_)}`, amt: final_, final: true });
 
-  const calc = {
-    tp, tg, achPct, slab: (slabRate*100).toFixed(2), slabRate,
-    base, nop, smp, nopAmt:nopBonus, smpAmt:smpBonus,
-    region, act,
-    gross: grossBeforeDock, capped, capApplied,
-    fls, lkg, pm, flsDock, leakDock,
-    final, fm,
-    steps:[],
-    losses:[],
-    totalLoss:0
+  return { achPct, slab, pm, base, nop, act, smp, smpD, gross, capped, wasCapped,
+    flsDock, flsApplied: flsDock > 0, dkPct, leakDock, final: final_, losses, totalLoss, steps };
+}
+
+// ── Context-aware NOP insight ──
+function buildNopInsight(nopCount, vintage, currentNopBonus) {
+  const cur = currentNopBonus;
+  const nxt = nopBonus(nopCount + 1, vintage);
+  const lift = nxt - cur;
+
+  // Already at NOP 8+ — each policy adds ₹600
+  if (nopCount >= 8) return {
+    icon:'🎯', tag:'NOP BONUS', ur:'orange', amt:600,
+    msg:`${nopCount} policies → ${inr(cur)} bonus. Each extra policy adds ₹600.`,
+    act:`Close 1 more policy → ${inr(cur + 600)} NOP bonus.`
   };
 
-  calc.steps.push({l:'Achievement',v:`${inr(tp)} / ${inr(tg)} = ${achPct.toFixed(1)}%`});
-  calc.steps.push({l:'Slab Rate',v:`${(slabRate*100).toFixed(2)}% at ${achPct.toFixed(0)}% achievement`});
-  calc.steps.push({l:'Base Incentive',v:`${inr(tp)} × ${(slabRate*100).toFixed(2)}%`,amt:base});
-  if(nop>0){
-    if(tp/nop >= MIN_TICKET){
-      calc.steps.push({l:'NOP Bonus',v:`${nop} policies × ${inr(NOP_RATE)} (avg ticket ≥₹1.2L)`,amt:nopBonus});
-    } else {
-      calc.steps.push({l:'NOP Bonus',v:`${nop} policies × ${inr(NOP_RATE)} (avg ticket <₹1.2L ⚠️)`,amt:0});
-      calc.losses.push({label:'NOP Bonus Lost',reason:`Avg ticket ${inr(tp/nop)} < ₹1.2L`,amount:nopBonus});
-    }
-  }
-  if(smp>0){
-    if(tp/smp >= MIN_TICKET){
-      calc.steps.push({l:'SMP Bonus',v:`${smp} policies × ${inr(SMP_RATE)} (avg ticket ≥₹1.2L)`,amt:smpBonus});
-    } else {
-      calc.steps.push({l:'SMP Bonus',v:`${smp} policies × ${inr(SMP_RATE)} (avg ticket <₹1.2L ⚠️)`,amt:0});
-      calc.losses.push({label:'SMP Bonus Lost',reason:`Avg ticket ${inr(tp/smp)} < ₹1.2L`,amount:smpBonus});
-    }
-  }
-  if(act>0) calc.steps.push({l:'Activation Bonus',v:`Region ${region}`,amt:act});
-  calc.steps.push({l:'Gross Incentive',v:'Sum of all components',amt:grossBeforeDock});
-  if(capApplied){
-    calc.steps.push({l:'₹2L Cap Applied',v:'Capped before persistency docks',amt:capped});
-    calc.losses.push({label:'Excess Above Cap',reason:'₹2L hard cap before docks',amount:grossBeforeDock - capped});
-  }
-  if(!fm){
-    if(flsDock>0) calc.steps.push({l:'FLS Dock',v:`${fls.toFixed(1)}% → ${(flsDock/capped*100).toFixed(0)}% penalty`,amt:-flsDock});
-    if(leakDock>0) calc.steps.push({l:'Leakage Dock',v:`${lkg.toFixed(1)}% → ${(leakDock/capped*100).toFixed(0)}% penalty`,amt:-leakDock});
-  } else {
-    calc.steps.push({l:'Persistency Docks',v:'Waived (first month)',amt:0});
-  }
-  calc.steps.push({l:'Final Payout',v:'After all docks & bonuses',amt:final,final:true});
-
-  calc.totalLoss = calc.losses.reduce((s,l)=>s+l.amount,0);
-
-  displayResults(calc);
-});
-
-function displayResults(c){
-  const wrap = document.querySelector('.wrap');
-  document.querySelectorAll('.hero,.losing-card,.card:not(:first-child),.breakdown-card,.stat-grid,.well-card,.steps-toggle,.steps-card,.export-btn,.footer-note').forEach(el=>el.remove());
-
-  const insights = [];
-  const actionIns = [];
-  const positiveIns = [];
-
-  if(c.achPct >= 120){
-    positiveIns.push({icon:'🔥',tag:'Elite Performer',msg:'120%+ achievement — you\'re in top tier!'});
-    insights.push({tag:'Elite Tier',msg:'Maximize NOP/SMP for top earnings.',type:'positive'});
-  } else if(c.achPct >= 100){
-    positiveIns.push({icon:'✅',tag:'Target Met',msg:'100%+ achievement — solid work!'});
-  } else if(c.achPct < 80){
-    actionIns.push({icon:'⚠️',tag:'Below 80%',msg:`You're at ${c.achPct.toFixed(0)}%. Push to 80% to unlock slab rates.`,type:'action'});
+  // Next policy gives zero lift — find the real target
+  if (lift <= 0) {
+    let jn = nopCount + 2, jl = 0;
+    while (jn <= 8 && jl <= 0) { jl = nopBonus(jn, vintage) - cur; jn++; }
+    jn--;
+    if (jl <= 0) return null;
+    const need = jn - nopCount;
+    return {
+      icon:'🎯', tag:'NOP BONUS', ur:'orange', amt:jl,
+      msg:`${nopCount} policies → ₹0 NOP bonus. Bonus starts at ${jn} policies → ${inr(jl)}.`,
+      act:`Get ${need} more polic${need > 1 ? 'ies' : 'y'} → ${inr(cur + jl)} NOP bonus.`
+    };
   }
 
-  if(c.nop > 0 && c.tp/c.nop < MIN_TICKET){
-    actionIns.push({icon:'📉',tag:'NOP Ticket Too Low',msg:`Avg ticket ${inr(c.tp/c.nop)} < ₹1.2L. Focus on higher-value policies.`,type:'action'});
-  }
-  if(c.smp > 0 && c.tp/c.smp < MIN_TICKET){
-    actionIns.push({icon:'📉',tag:'SMP Ticket Too Low',msg:`Avg ticket ${inr(c.tp/c.smp)} < ₹1.2L. Prioritize premium cases.`,type:'action'});
+  // NOP 7→8: special jump (rate changes from ₹500 to ₹600 per policy for all)
+  if (nopCount === 7) return {
+    icon:'🔥', tag:'NOP BONUS', ur:'red', amt:lift,
+    msg:`7 policies → ₹3,500 NOP bonus. 1 more policy = +₹1,300 extra. Rate upgrades to ₹600/policy.`,
+    act:`Close 1 more policy → NOP bonus becomes ₹4,800.`
+  };
+
+  // Standard: show current → next simply
+  const urgency = (nopCount === 3 || (nopCount < 3 && cur === 0)) ? 'red' : 'orange';
+  const icon = urgency === 'red' ? '🔥' : '🎯';
+  return {
+    icon, tag:'NOP BONUS', ur: urgency, amt: lift,
+    msg:`${nopCount} polic${nopCount === 1 ? 'y' : 'ies'} → ${cur > 0 ? inr(cur) : '₹0'} NOP bonus. 1 more policy = +${inr(lift)} extra.`,
+    act:`Close 1 more policy → NOP bonus becomes ${inr(nxt)}.`
+  };
+}
+
+// ── Build all insights ──
+function buildInsights(inp, c) {
+  const ins = [];
+  const { tgt, achieved, persPct, persTgt, nop: nopCount, brAct, spAct, trad, lcr, leak, vintage } = inp;
+  const ach = c.achPct;
+
+  // FLS
+  if (c.flsApplied) {
+    const gap = Math.max(0, Math.ceil(tgt - achieved));
+    ins.push({ icon:'🚨', tag:'LOSING 50%', ur:'red', amt:c.flsDock,
+      msg:`FLS 50% docking is active — you're losing ${inr(c.flsDock)} this month.`,
+      act: gap > 0 ? `Hit 100% target (${inr(gap)} more WFYP) → docking fully reversed.` : 'Next month: login within first 10 days.' });
   }
 
-  if(!c.fm){
-    if(c.fls > 15){
-      actionIns.push({icon:'🚨',tag:'High FLS',msg:`FLS at ${c.fls.toFixed(1)}%. Improve onboarding to reduce surrenders.`,type:'action'});
-    }
-    if(c.lkg > 15){
-      actionIns.push({icon:'🚨',tag:'High Leakage',msg:`Leakage at ${c.lkg.toFixed(1)}%. Follow up with clients post-sale.`,type:'action'});
+  // Next slab
+  const slabs = [{p:60,r:.40},{p:70,r:.40},{p:85,r:.60},{p:100,r:1.00},{p:125,r:1.10},{p:150,r:1.20},{p:200,r:1.30},{p:300,r:1.50}];
+  for (const {p,r} of slabs) {
+    if (ach < p && ach >= Math.max(0, p-25)) {
+      if (p <= 85 && vintage === 'M13+') continue;
+      const need = Math.ceil((p/100)*tgt), gap = need - achieved;
+      if (gap <= 0 || r <= c.slab) break;
+      const lift = Math.round(need*(r/100)*c.pm) - c.base;
+      if (lift <= 0) break;
+      const flsRev = p === 100 && c.flsApplied ? c.flsDock : 0;
+      ins.push({ icon:p===100?'🔥':'📈', tag:p===100?'CROSS 100%':`NEXT SLAB: ${p}%`,
+        ur:gap<=tgt*0.1?'red':'orange', amt:lift+flsRev,
+        msg:`At ${ach.toFixed(1)}%, you're ${inr(gap)} WFYP away from ${p}%. Slab: ${c.slab}% → ${r}%.${flsRev>0?' Crossing 100% also reverses FLS docking.':''}`,
+        act:`+${inr(lift)} base${flsRev>0?` + ${inr(flsRev)} FLS reversal = ${inr(lift+flsRev)} total`:''}.` });
+      break;
     }
   }
 
-  if(c.capApplied){
-    actionIns.push({icon:'💡',tag:'Cap Hit',msg:'You hit ₹2L cap. Bank excess for next month or diversify channels.',type:'action'});
+  // M13+ zero base
+  if (vintage === 'M13+' && ach < 100 && c.base === 0) {
+    ins.push({ icon:'⚠️', tag:'NO BASE PAYOUT', ur:'red', amt:Math.round(tgt*0.01*c.pm),
+      msg:`M13+ requires 100%+ achievement for any base incentive. You're at ${ach.toFixed(1)}% — currently ₹0 base.`,
+      act:`${inr(Math.max(0,Math.ceil(tgt-achieved)))} more WFYP → crosses 100% → unlocks 1.00% slab.` });
   }
 
-  if(c.pm >= 0.85){
-    positiveIns.push({icon:'💪',tag:'Strong Persistency',msg:`${Math.round(c.pm*100)}% retention — excellent client care!`});
+  // Leakage
+  if (leak >= 5 && c.leakDock > 0) {
+    const tiers=[5,10,15,20,30,40,50]; let curTier=5;
+    for (const t of tiers) { if (leak >= t) curTier = t; }
+    const save = Math.round((c.capped - c.flsDock) * (c.dkPct - leakDocker(curTier-1)));
+    ins.push({ icon:'🛡️', tag:`LEAKAGE ${leak}%`, ur:leak>=20?'red':'orange', amt:save,
+      msg:`${Math.round(c.dkPct*100)}% docker applied → losing ${inr(c.leakDock)}. Dropping below ${curTier}% recovers ${inr(save)}.`,
+      act:`Follow up on pending issuances. Every % reduction in leakage = direct money recovered.` });
   }
 
-  if(c.region !== 'NA' && c.act > 0){
-    positiveIns.push({icon:'🎯',tag:'Activation Unlocked',msg:`Bonus: ${inr(c.act)} from ${c.region}`});
+  // SMP
+  if (c.smp === 0) {
+    const {lcr:cL,nop:cN,trad:cT,met} = c.smpD;
+    const miss = [];
+    if (!cL) miss.push(`LCR to 75% (now ${lcr}%, need ${75-lcr}% more)`);
+    if (!cN) miss.push(`NOP to 4 (now ${nopCount}, need ${4-nopCount} more)`);
+    if (!cT) miss.push(`1 Traditional policy (now ${trad})`);
+    const nopKick = (!cN && nopCount < 4) ? (nopBonus(4,vintage) - c.nop) : 0;
+    ins.push({ icon:'💎', tag:`SMP: ${met}/3 CRITERIA`, ur:met>=2?'red':'orange', amt:1500+Math.max(0,nopKick),
+      msg:`₹1,500 SMP requires all 3: LCR≥75%${cL?'✅':'❌'} | NOP≥4${cN?'✅':'❌'} | Trad≥1${cT?'✅':'❌'}`,
+      act:met===2 ? `Only 1 gap: ${miss[0]} → ${inr(1500+Math.max(0,nopKick))} unlocked.` : `Fix: ${miss.join(' & ')}.` });
   }
 
-  const chartData = [];
-  if(c.base > 0) chartData.push({n:'Base',v:c.base});
-  if(c.nopAmt > 0) chartData.push({n:'NOP',v:c.nopAmt});
-  if(c.act > 0) chartData.push({n:'Activation',v:c.act});
-  if(c.smpAmt > 0) chartData.push({n:'SMP',v:c.smpAmt});
+  // NOP — context-aware
+  const nopIns = buildNopInsight(nopCount, vintage, c.nop);
+  if (nopIns) ins.push(nopIns);
 
+  // Activation
+  if (c.act === 0) {
+    const bG=Math.max(0,2-brAct), sG=Math.max(0,4-spAct);
+    ins.push({ icon:'🚀', tag:'ACTIVATION ₹2,000', ur:(brAct>=1||spAct>=3)?'red':'orange', amt:2000,
+      msg:`₹2,000 activation needs: 2 Branch activations (have ${brAct}) OR 4 SP activations (have ${spAct}).`,
+      act:`${bG} more Branch activation${bG>1?'s':''} OR ${sG} more SP activation${sG>1?'s':''} → ₹2,000 unlocked.` });
+  }
+
+  // Persistency penalty
+  if (vintage !== 'M0-M3' && c.pm < 1.00) {
+    const pmPct = Math.round(c.pm*100);
+    const loss  = Math.round(achieved*(c.slab/100)*(1-c.pm));
+    const band  = c.pm===0.85?'Target−5% to Target':c.pm===0.70?'Target−10% to Target−5%':'Below Target−10%';
+    ins.push({ icon:'⚠️', tag:`PERSISTENCY ${pmPct}%`, ur:c.pm<=0.70?'red':'orange', amt:loss,
+      msg:`Persistency (${persPct}%) vs target (${persTgt}%) → ${band} → ${pmPct}% multiplier. Base is ${100-pmPct}% lower than it could be.`,
+      act:`Improve to ≥${persTgt}% → full 100% multiplier → +${inr(loss)} base.` });
+  }
+
+  // Positives
+  if (c.smp > 0) ins.push({icon:'✅',tag:'SMP ✅',ur:'green',amt:0,msg:'All 3 SMP criteria met → ₹1,500 secured.',act:''});
+  if (c.act > 0) ins.push({icon:'✅',tag:'ACTIVATION ✅',ur:'green',amt:0,msg:'₹2,000 activation bonus secured. Branch/SP contributions active.',act:''});
+  if (c.wasCapped) ins.push({icon:'🏆',tag:'₹2L CAP HIT',ur:'green',amt:0,msg:`Pre-cap payout: ${inr(c.gross)}. Keep leakage <5% to protect the full amount.`,act:''});
+  if (c.pm >= 1.10) ins.push({icon:'⭐',tag:'PERSISTENCY BOOST',ur:'green',amt:0,msg:`Persistency ${persPct}% is ${persPct-persTgt}%+ above target → ${Math.round(c.pm*100)}% multiplier bonus active.`,act:''});
+
+  const ord={red:0,orange:1,grey:2,green:3};
+  ins.sort((a,b)=>(ord[a.ur]??2)!==(ord[b.ur]??2)?(ord[a.ur]??2)-(ord[b.ur]??2):b.amt-a.amt);
+  return ins;
+}
+
+// ── Render helpers ──
+function tag(t, cls, html) { const e=document.createElement(t); e.className=cls||''; e.innerHTML=html||''; return e; }
+
+function renderInsight(ins) {
+  const d = document.createElement('div');
+  d.className = `insight ${ins.ur}`;
+  d.innerHTML = `
+    <div class="insight-head">
+      <span class="insight-icon">${ins.icon}</span>
+      <span class="insight-tag">${ins.tag}</span>
+      ${ins.amt > 0 ? `<span class="insight-gain">+${inr(ins.amt)}</span>` : ''}
+    </div>
+    <div class="insight-msg">${ins.msg}</div>
+    ${ins.act ? `<div class="insight-act">👉 ${ins.act}</div>` : ''}
+  `;
+  return d;
+}
+
+// ── Main calculate ──
+function calculate() {
+  const ptVal = parseFloat(g('persTgt')) || 86;
+  const ppRaw = parseFloat(g('persPct'));
+  const inp = {
+    tgt:      parseFloat(g('tgt'))     || 0,
+    achieved: parseFloat(g('achieved'))|| 0,
+    persPct:  isNaN(ppRaw) ? ptVal : ppRaw,
+    persTgt:  ptVal,
+    nop:      parseInt(g('nop'))       || 0,
+    brAct:    parseInt(g('brAct'))     || 0,
+    spAct:    parseInt(g('spAct'))     || 0,
+    trad:     parseInt(g('trad'))      || 0,
+    lcr:      parseFloat(g('lcr'))     || 0,
+    leak:     parseFloat(g('leak'))    || 0,
+    vintage:  document.getElementById('vintage').value,
+    flsActive,
+  };
+
+  const c   = runCalc(inp);
+  const ins = buildInsights(inp, c);
+  const actionIns   = ins.filter(i => i.ur === 'red' || i.ur === 'orange');
+  const positiveIns = ins.filter(i => i.ur === 'green');
+  const chartData   = [{n:'Base',v:c.base},{n:'NOP',v:c.nop},{n:'Activation',v:c.act},{n:'SMP',v:c.smp}].filter(d=>d.v>0);
+
+  const wrap = document.getElementById('results');
+  wrap.innerHTML = '';
+  wrap.classList.remove('hidden');
+
+  // ① Hero
   const hero = document.createElement('div');
   hero.className = 'hero';
-  let tags = '';
-  if(c.achPct >= 120) tags += '<span class="hero-tag" style="background:#73B964;color:#FFF">🔥 Elite</span>';
-  else if(c.achPct >= 100) tags += '<span class="hero-tag" style="background:#F77400;color:#FFF">✅ Target</span>';
-  if(c.region !== 'NA') tags += '<span class="hero-tag" style="background:#7C2279;color:#FFF">🎯 Activation</span>';
-  if(c.fm) tags += '<span class="hero-tag" style="background:#FFFFFF;color:#414042">🆕 First Month</span>';
+  const tags = [
+    c.wasCapped ? `<span class="hero-tag" style="background:#F77400;color:#FFFFFF">₹2L cap (pre: ${inr(c.gross)})</span>` : '',
+    c.flsApplied ? `<span class="hero-tag" style="background:#FFFFFF;color:#C91429;font-weight:700">⚠️ 50% FLS dock: −${inr(c.flsDock)}</span>` : '',
+    c.leakDock > 0 ? `<span class="hero-tag" style="background:#414042;color:#FFFFFF">Leakage (${Math.round(c.dkPct*100)}%): −${inr(c.leakDock)}</span>` : '',
+  ].filter(Boolean).join('');
   hero.innerHTML = `
-    <div class="hero-label">Your Final Payout</div>
+    <div class="hero-label">Total Incentive This Month</div>
     <div class="hero-amount">${inr(c.final)}</div>
     <div class="hero-meta">Achievement: ${c.achPct.toFixed(1)}% | Slab: ${c.slab}% | Persistency: ${Math.round(c.pm*100)}%</div>
     ${tags ? `<div class="hero-tags">${tags}</div>` : ''}
   `;
   wrap.appendChild(hero);
 
+  // ② Money You're Losing
   if (c.losses.length > 0 && c.totalLoss > 0) {
     const lc = document.createElement('div');
     lc.className = 'losing-card';
@@ -825,6 +593,7 @@ function displayResults(c){
     wrap.appendChild(lc);
   }
 
+  // ③ What To Do Next
   if (actionIns.length > 0) {
     const ac = document.createElement('div');
     ac.className = 'card';
@@ -833,6 +602,7 @@ function displayResults(c){
     wrap.appendChild(ac);
   }
 
+  // ④ Breakdown chart
   if (chartData.length > 0) {
     const bc = document.createElement('div');
     bc.className = 'breakdown-card';
@@ -854,10 +624,11 @@ function displayResults(c){
     wrap.appendChild(bc);
   }
 
+  // ⑤ Stat cards
   const sg = document.createElement('div');
   sg.className = 'stat-grid';
   const stats = [
-    {l:'Base Incentive',v:inr(c.base),c:'#C91429'},
+    {l:'Base',v:inr(c.base),c:'#C91429'},
     {l:'NOP Bonus',v:inr(c.nop),c:'#F77400'},
     {l:'Activation',v:inr(c.act),c:'#73B964'},
     {l:'SMP Bonus',v:inr(c.smp),c:'#7C2279'},
@@ -873,6 +644,7 @@ function displayResults(c){
   });
   wrap.appendChild(sg);
 
+  // ⑥ What's going well
   if (positiveIns.length > 0) {
     const wc = document.createElement('div');
     wc.className = 'well-card';
@@ -886,6 +658,7 @@ function displayResults(c){
     wrap.appendChild(wc);
   }
 
+  // ⑦ Step-by-step
   let stepsVisible = false;
   const stBtn = document.createElement('button');
   stBtn.className = 'steps-toggle';
@@ -912,6 +685,7 @@ function displayResults(c){
     stBtn.textContent = stepsVisible ? '▲ Hide Step-by-Step Calculation' : '▼ Show Step-by-Step Calculation';
   });
 
+  // Export
   const expBtn = document.createElement('button');
   expBtn.className = 'export-btn';
   expBtn.textContent = '📤 Export / Print PDF';
@@ -924,13 +698,6 @@ function displayResults(c){
   wrap.appendChild(note);
 
   wrap.scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-function renderInsight(i){
-  const el = document.createElement('div');
-  el.className = `insight${i.type==='positive'?' positive':''}`;
-  el.innerHTML = `<div class="insight-tag">${i.icon} ${i.tag}</div><div class="insight-msg">${i.msg}</div>`;
-  return el;
 }
 </script>
 </body>
